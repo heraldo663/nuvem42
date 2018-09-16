@@ -2,6 +2,7 @@
 module.exports = (sequelize, DataTypes) => {
   const Assets = sequelize.define('Assets', {
     name: DataTypes.STRING,
+    filename: DataTypes.STRING,
     mimetype: DataTypes.STRING,
     encoding: DataTypes.STRING,
     size: DataTypes.INTEGER,

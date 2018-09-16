@@ -11,6 +11,9 @@ module.exports = {
       name: {
         type: Sequelize.STRING
       },
+      filename: {
+        type: Sequelize.STRING
+      },
       encoding: {
         type: Sequelize.STRING
       },

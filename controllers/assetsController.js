@@ -1,5 +1,7 @@
 const { Assets } = require('../models');
-
+const fs = require('fs');
+const path = require('path')
+const baseDir = path.join(__dirname, `../${process.env.MEDIA_ROOT}`);
 
 module.exports = {
   async getAssets(req, res) {
@@ -17,23 +19,27 @@ module.exports = {
   },
   async createAssets(req, res) {
     try {
-      console.log(req.file);
+      console.log(req.file)
       const newAsset = {
         name: req.file.originalname,
         mimeType: req.file.mimetype,
         encoding: req.file.encoding,
-        size: req.file.size
+        filename: req.file.filename,
+        size: req.file.size,
+        bucketId: req.params.bucket_id
       }
-      return res.json({ msg: "under construction" });
+      const asset = await Assets.create(newAsset);
+      return res.json(asset);
     } catch (error) {
-      res.status(500).json({ error, success: false })
+      res.status(500).json({ error, success: false });
     }
   },
 
   async deleteAssets(req, res) {
     try {
-      const Assets = await Assets.findById(req.params.id);
-      Assets.destroy()
+      const asset = await Assets.findById(req.params.id);
+      fs.unlinkSync(`${baseDir}/${req.user.username}/${asset.filename}`);
+      asset.destroy()
       res.json({ success: true })
     } catch (error) {
       res.status(500).json({ error, success: false })
