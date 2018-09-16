@@ -13,6 +13,10 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'bucketId',
       onDelete: 'CASCADE'
     });
+    // Bucket.belongsTo(models.Dirs, {
+    //   foreignKey: 'bucketsId',
+    //   onDelete: 'CASCADE'
+    // });
   };
   return Bucket;
 };

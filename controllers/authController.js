@@ -3,18 +3,12 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 module.exports = {
-  register(req, res) {
-    // const { errors, isValid } = validateRegisterInput(req.body);
-
-    // Check Validation
-    // if (!isValid) {
-    //   return res.status(400).json(errors);
-    // }
-
-    User.findOne({ where: { email: req.body.email } }).then(user => {
+  async register(req, res) {
+    try {
+      const user = await User.findOne({ where: { email: req.body.email } })
       if (user) {
-        errors.email = 'Email already exists';
-        return res.status(400).json(errors);
+        let errors = { email: 'Email already exists' };
+        return res.status(400).json({ success: false, errors });
       } else {
 
         const newUser = {
@@ -33,44 +27,44 @@ module.exports = {
           });
         });
       }
-    });
+
+    } catch (error) {
+      res.status(500).json({ error, success: false })
+    }
+
+
 
   },
 
-  login(req, res) {
-    const { email, password } = req.body
+  async login(req, res) {
+    try {
+      // Find user by email
+      const { email, password } = req.body
+      const user = await User.findOne({ where: { email } })
 
-    // Find user by email
-    User.findOne({ where: { email } }).then(user => {
-      // Check for user
-      // if (!user) {
-      //   errors.email = 'User not found';
-      //   return res.status(404).json(errors);
-      // }
+      const isMatch = await bcrypt.compare(password, user.password)
+      if (isMatch) {
+        // User Matched
+        const payload = { id: user.id, username: user.username }; // Create JWT Payload
+        // Sign Token
+        jwt.sign(
+          payload,
+          process.env.SECRET,
+          { expiresIn: 3600 * 24 },
+          (err, token) => {
+            return res.json({
+              success: true,
+              token: 'Bearer ' + token
+            });
+          }
+        );
+      } else {
+        let errors = { password: 'Password incorrect' }
+        return res.status(400).json({ errors, success: false });
+      }
+    } catch (error) {
+      res.status(500).json({ error, success: false })
+    }
 
-      // Check Password
-      bcrypt.compare(password, user.password).then(isMatch => {
-        if (isMatch) {
-          // User Matched
-          const payload = { id: user.id, username: user.username }; // Create JWT Payload
-
-          // Sign Token
-          jwt.sign(
-            payload,
-            process.env.SECRET,
-            { expiresIn: 3600 * 24 },
-            (err, token) => {
-              res.json({
-                success: true,
-                token: 'Bearer ' + token
-              });
-            }
-          );
-        } else {
-          errors.password = 'Password incorrect';
-          return res.status(400).json(errors);
-        }
-      });
-    });
   },
 }

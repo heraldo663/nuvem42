@@ -11,6 +11,15 @@ module.exports = {
       name: {
         type: Sequelize.STRING
       },
+      encoding: {
+        type: Sequelize.STRING
+      },
+      mimetype: {
+        type: Sequelize.STRING
+      },
+      size: {
+        type: Sequelize.INTEGER
+      },
       url: {
         type: Sequelize.STRING
       },

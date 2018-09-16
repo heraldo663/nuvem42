@@ -2,6 +2,9 @@
 module.exports = (sequelize, DataTypes) => {
   const Assets = sequelize.define('Assets', {
     name: DataTypes.STRING,
+    mimetype: DataTypes.STRING,
+    encoding: DataTypes.STRING,
+    size: DataTypes.INTEGER,
     url: DataTypes.STRING
   }, {});
   Assets.associate = function (models) {
@@ -10,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'bucketId',
       onDelete: 'CASCADE'
     });
+
   };
   return Assets;
 };
