@@ -14,10 +14,10 @@
     "dialect": "postgres"
   },
   "production": {
-    "username": "server",
-    "password": "fileserver",
+    "username": "postgres",
+    "password": "password",
     "database": "fileserver_production",
-    "host": "127.0.0.1",
+    "host": "postgres",
     "dialect": "postgres"
   }
 }
