@@ -4,6 +4,8 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const passport = require("passport");
+const helmet = require("helmet");
+const cors = require("cors");
 
 const authRouter = require("./routes/api/auth");
 const bucketRouter = require("./routes/api/bucket");
@@ -18,6 +20,8 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(helmet());
+app.use(cors());
 
 app.use(
   "/media",
