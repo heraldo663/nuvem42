@@ -2,6 +2,8 @@ const { User } = require("../models");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+// @TODO: implemente validation
+
 module.exports = {
   async register(req, res) {
     try {

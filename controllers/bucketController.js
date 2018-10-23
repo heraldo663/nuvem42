@@ -1,5 +1,7 @@
 const { Bucket } = require("../models");
 
+// @TODO: implemente validation
+
 module.exports = {
   async getBuckets(req, res) {
     try {

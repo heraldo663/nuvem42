@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const baseDir = path.join(__dirname, `../${process.env.MEDIA_ROOT}`);
 
+// @TODO: implemente validation
 module.exports = {
   async getAssets(req, res) {
     try {

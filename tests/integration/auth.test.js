@@ -1,14 +1,12 @@
-const supertest = require("supertest");
+require("../setup");
 const faker = require("faker");
-const app = require("../../app");
-let server, request;
+const { User } = require("../../models");
 
-beforeAll(done => {
-  server = app.listen(done);
-  request = supertest.agent(server);
-});
-afterAll(async done => {
-  server.close(done);
+beforeEach(() => {
+  User.destroy({
+    where: {},
+    truncate: true
+  });
 });
 
 describe("register", () => {
