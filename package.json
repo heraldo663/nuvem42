@@ -4,9 +4,12 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "dev:server": "nodemon ./bin/www",
+    "dev:server": "NODE_ENV=development nodemon ./bin/www",
     "dev:client": "npm start --prefix client",
-    "client:build": "npm run build --prefix client"
+    "client:build": "npm run build --prefix client",
+    "test": "jest --detectOpenHandles",
+    "test:watch": "jest --watchAll --verbose --detectOpenHandles",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -27,6 +30,9 @@
     "sequelize-cli": "^4.1.1"
   },
   "devDependencies": {
-    "nodemon": "^1.18.4"
+    "faker": "^4.1.0",
+    "jest": "^23.6.0",
+    "nodemon": "^1.18.4",
+    "supertest": "^3.3.0"
   }
 }
