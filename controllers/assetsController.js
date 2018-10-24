@@ -12,7 +12,7 @@ module.exports = {
           bucketId: req.params.bucket_id
         }
       });
-      return res.json(assets);
+      return res.send(assets);
     } catch (error) {
       res.status(500).json({ error, success: false });
     }
@@ -20,6 +20,7 @@ module.exports = {
   async createAssets(req, res) {
     try {
       console.log(req.file);
+
       const newAsset = {
         name: req.file.originalname,
         mimeType: req.file.mimetype,
@@ -31,8 +32,10 @@ module.exports = {
           req.user.username
         }/${req.file.filename}`
       };
+
+      console.log(asset);
       const asset = await Assets.create(newAsset);
-      return res.json(asset);
+      return res.send(asset);
     } catch (error) {
       res.status(500).json({ error, success: false });
     }
@@ -41,9 +44,10 @@ module.exports = {
   async deleteAssets(req, res) {
     try {
       const asset = await Assets.findById(req.params.id);
+      console.log(asset);
       fs.unlinkSync(`${baseDir}/${req.user.username}/${asset.filename}`);
       asset.destroy();
-      res.json({ success: true });
+      res.send({ success: true });
     } catch (error) {
       res.status(500).json({ error, success: false });
     }

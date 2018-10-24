@@ -1,11 +1,13 @@
-require("../setup");
+const request = require("supertest");
 const faker = require("faker");
-const { User } = require("../../models");
+const { User } = require("./../../models");
 
 beforeEach(() => {
+  server = require("../../app");
+});
+afterEach(async () => {
   User.destroy({
-    where: {},
-    truncate: true
+    where: {}
   });
 });
 
@@ -17,7 +19,9 @@ describe("register", () => {
       password: faker.internet.password()
     };
 
-    const res = await request.post("/api/auth/register").send(newUser);
+    const res = await request(server)
+      .post("/api/auth/register")
+      .send(newUser);
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty("name", newUser.name);
   });
@@ -28,7 +32,9 @@ describe("register", () => {
       password: "123"
     };
 
-    const res = await request.post("/api/auth/register").send(newUser);
+    const res = await request(server)
+      .post("/api/auth/register")
+      .send(newUser);
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty("success", false);
   });
@@ -39,8 +45,12 @@ describe("register", () => {
       password: faker.internet.password()
     };
 
-    await request.post("/api/auth/register").send(newUser);
-    const res = await request.post("/api/auth/register").send(newUser);
+    await request(server)
+      .post("/api/auth/register")
+      .send(newUser);
+    const res = await request(server)
+      .post("/api/auth/register")
+      .send(newUser);
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty("success", false);
   });
@@ -53,7 +63,9 @@ describe("login", () => {
       password: faker.internet.password()
     };
 
-    const res = await request.post("/api/auth/login").send(user);
+    const res = await request(server)
+      .post("/api/auth/login")
+      .send(user);
 
     expect(res.status).toBe(400);
   });
@@ -64,10 +76,14 @@ describe("login", () => {
       username: "tester"
     };
 
-    await request.post("/api/auth/register").send(user);
+    await request(server)
+      .post("/api/auth/register")
+      .send(user);
     delete user.username;
 
-    const res = await request.post("/api/auth/login").send(user);
+    const res = await request(server)
+      .post("/api/auth/login")
+      .send(user);
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty("success", true);

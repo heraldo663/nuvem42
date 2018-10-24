@@ -38,6 +38,12 @@ module.exports = {
         rootBucketId: req.body.bucketId || null,
         userId: req.user.id
       };
+
+      if (!newBucket.bucket) {
+        return res
+          .status(400)
+          .send({ success: false, error: "name cannot be blank" });
+      }
       const bucket = await Bucket.create(newBucket);
       return res.json(bucket);
     } catch (error) {
