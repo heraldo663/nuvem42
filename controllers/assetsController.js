@@ -19,8 +19,6 @@ module.exports = {
   },
   async createAssets(req, res) {
     try {
-      console.log(req.file);
-
       const newAsset = {
         name: req.file.originalname,
         mimeType: req.file.mimetype,
@@ -33,7 +31,6 @@ module.exports = {
         }/${req.file.filename}`
       };
 
-      console.log(asset);
       const asset = await Assets.create(newAsset);
       return res.send(asset);
     } catch (error) {
