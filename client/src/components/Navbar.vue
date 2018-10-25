@@ -4,7 +4,7 @@
       <input class="form-control form-control-dark w-100" disabled type="text" placeholder="Search" aria-label="Search">
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
-          <a class="nav-link" href="#">Sign out</a>
+          <a class="nav-link" href="#" @click="logout">Sair</a>
         </li>
       </ul>
     </nav>
@@ -12,6 +12,12 @@
 
 <script>
 export default {
-  name: "navbar"
+  name: "navbar",
+  methods: {
+    logout() {
+      this.$store.dispatch("logout");
+      this.$router.push("/login");
+    }
+  }
 };
 </script>

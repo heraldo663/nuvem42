@@ -3,6 +3,9 @@
     <div class="container">
       <div class="row">
         <div class="col-md-6 offset-md-3">
+          <div class="alert alert-danger" role="alert" v-for="(error, index) in errors" :key="index">
+            {{error}}
+          </div>
           <form class="form-signin" @submit.prevent="onSubmit">
             <h1 class="h3 mb-3 font-weight-normal">Login</h1>
             <div class="form-group">
@@ -29,8 +32,6 @@
 </template>
 
 <script>
-// @ is an alias to /src
-
 export default {
   data() {
     return {
@@ -43,19 +44,21 @@ export default {
   name: "login",
   methods: {
     onSubmit() {
-      if (this.email && this.password) {
-        return true;
-      }
-
-      this.errors = [];
-
-      if (!this.name) {
-        this.errors.push("Name required.");
-      }
-      if (!this.age) {
-        this.errors.push("Age required.");
-      }
+      this.$store.dispatch("login", {
+        email: this.email,
+        password: this.password,
+        rememberMe: this.rememberMe
+      });
+      this.errors = this.$store.getters.errors;
+      if (this.errors.length == 0) this.$router.push("/");
+    },
+    cleanErrors() {
+      this.$store.dispatch("cleanErrors");
+      this.errors.pop();
     }
+  },
+  created() {
+    this.interval = setInterval(() => this.cleanErrors(), 4000);
   }
 };
 </script>

@@ -1,19 +1,22 @@
 import Vue from "vue";
 import Router from "vue-router";
 import Login from "./views/Login.vue";
+import Dashboard from "./views/Dashboard.vue";
+import store from "./store";
 
 Vue.use(Router);
 
-export default new Router({
+let router = new Router({
+  mode: "history",
   routes: [
     {
       path: "/login",
-      name: "login",
+      name: "Login",
       component: Login
     },
     {
       path: "/register",
-      name: "register",
+      name: "Register",
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
@@ -23,8 +26,21 @@ export default new Router({
     {
       path: "/",
       name: "dashboard",
-      component: () =>
-        import(/* webpackChunkName: "Dashboard" */ "./views/Dashboard.vue")
+      component: Dashboard
     }
   ]
 });
+
+const openRoutes = ["Login", "Register"];
+
+router.beforeEach((to, from, next) => {
+  if (openRoutes.includes(to.name)) {
+    next();
+  } else if (!(store.getters.authToken || localStorage.getItem("authToken"))) {
+    next();
+  } else {
+    next("/login");
+  }
+});
+
+export default router;
