@@ -1,5 +1,5 @@
 <template>
-  <div class="text-center">
+  <div class="text-center mt-4">
     <div class="container">
       <div class="row">
         <div class="col-md-6 offset-md-3">
@@ -45,28 +45,21 @@ export default {
   },
   name: "register",
   methods: {
-    onSubmit() {
-      this.$store.dispatch("register", {
-        email: this.email,
-        password: this.password,
-        username: this.name
-      });
-      this.error = this.$store.getters.error;
-
-      if (!this.error.length == 0) {
-        this.success = !this.success;
+    async onSubmit() {
+      try {
+        await this.axios.post("/api/auth/register", {
+          email: this.email,
+          password: this.password,
+          username: this.name
+        });
+        this.$router.push("/login");
+      } catch (error) {
+        this.error = error.response.data.error;
         setTimeout(() => {
-          this.$router.push("/login");
-        }, 2500);
+          this.error = "";
+        }, 3500);
       }
-    },
-    cleanErrors() {
-      this.$store.dispatch("cleanErrors");
-      this.errors = "";
     }
-  },
-  created() {
-    this.interval = setInterval(() => this.cleanErrors(), 5000);
   }
 };
 </script>

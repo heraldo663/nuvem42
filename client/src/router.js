@@ -36,7 +36,7 @@ const openRoutes = ["Login", "Register"];
 router.beforeEach((to, from, next) => {
   if (openRoutes.includes(to.name)) {
     next();
-  } else if (!(store.getters.authToken || localStorage.getItem("authToken"))) {
+  } else if (store.getters.authToken) {
     next();
   } else {
     next("/login");

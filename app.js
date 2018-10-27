@@ -28,14 +28,14 @@ app.use(
   passport.authenticate("jwt", { session: false }),
   express.static(__dirname + "/media")
 );
-app.use(express.static(path.join(__dirname, "client/build")));
+app.use(express.static(path.join(__dirname, "client/dist")));
 
 app.use("/api/auth", authRouter);
 app.use("/api/bucket", bucketRouter);
 app.use("/api/bucket/:bucket_id/assets", assetsRouter);
 
 app.get("/*", function(req, res) {
-  res.sendFile(path.join(__dirname, "client/build", "index.html"));
+  res.sendFile(path.join(__dirname, "client/dist", "index.html"));
 });
 
 module.exports = app;

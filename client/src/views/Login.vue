@@ -1,9 +1,9 @@
 <template>
-  <div class="text-center">
+  <div class="text-center mt4">
     <div class="container">
       <div class="row">
         <div class="col-md-6 offset-md-3">
-          <div class="alert alert-danger" role="alert" v-for="(error, index) in errors" :key="index">
+          <div class="alert alert-danger" role="alert" v-if="error">
             {{error}}
           </div>
           <form class="form-signin" @submit.prevent="onSubmit">
@@ -38,27 +38,30 @@ export default {
       email: "",
       password: "",
       rememberMe: false,
-      errors: []
+      error: this.$store.getters.error,
+      interval: function() {}
     };
   },
   name: "login",
   methods: {
-    onSubmit() {
-      this.$store.dispatch("login", {
-        email: this.email,
-        password: this.password,
-        rememberMe: this.rememberMe
-      });
-      this.errors = this.$store.getters.errors;
-      if (this.errors.length == 0) this.$router.push("/");
-    },
-    cleanErrors() {
-      this.$store.dispatch("cleanErrors");
-      this.errors.pop();
+    async onSubmit() {
+      try {
+        const res = await this.axios.post("/api/auth/login", {
+          email: this.email,
+          password: this.password
+        });
+        this.$store.dispatch("login", {
+          token: res.data.token,
+          rememberMe: this.rememberMe
+        });
+        this.$router.push("/");
+      } catch (error) {
+        this.error = error.response.data.error;
+        setTimeout(() => {
+          this.error = "";
+        }, 3500);
+      }
     }
-  },
-  created() {
-    this.interval = setInterval(() => this.cleanErrors(), 4000);
   }
 };
 </script>

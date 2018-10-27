@@ -15,8 +15,8 @@ module.exports = {
       }
       const user = await User.findOne({ where: { email: req.body.email } });
       if (user) {
-        let errors = { email: "Email already exists" };
-        return res.status(400).json({ success: false, errors });
+        let error = "Email already exists";
+        return res.status(400).json({ success: false, error });
       } else {
         const newUser = {
           username: req.body.username,
@@ -63,11 +63,12 @@ module.exports = {
           }
         );
       } else {
-        let errors = { password: "Password incorrect" };
-        return res.status(400).json({ errors, success: false });
+        return res
+          .status(400)
+          .send({ error: "Password incorrect", success: false });
       }
     } catch (error) {
-      res.status(400).json({ error: "email not found", success: false });
+      res.status(400).send({ error: "email not found", success: false });
     }
   }
 };
