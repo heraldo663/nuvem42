@@ -1,6 +1,8 @@
 const { User } = require("../models");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const _ = require("lodash");
+const { Bucket } = require("../models");
 
 // @TODO: implemente validation
 
@@ -25,17 +27,47 @@ module.exports = {
         };
 
         bcrypt.genSalt(10, (err, salt) => {
-          bcrypt.hash(newUser.password, salt, (err, hash) => {
+          bcrypt.hash(newUser.password, salt, async (err, hash) => {
             if (err) throw err;
             newUser.password = hash;
-            User.create(newUser)
-              .then(user => res.json(user))
-              .catch(err => console.log(err));
+            const user = await User.create(newUser);
+            try {
+              const userWithoutPassword = _.pick(user, [
+                "id",
+                "username",
+                "email"
+              ]);
+              const newMusic = {
+                bucket: "musica",
+                rootBucketId: null,
+                userId: user.id
+              };
+              const newMovies = {
+                bucket: "videos",
+                rootBucketId: null,
+                userId: user.id
+              };
+              const newDocuments = {
+                bucket: "documentos",
+                rootBucketId: null,
+                userId: user.id
+              };
+
+              await Bucket.create(newMusic);
+              await Bucket.create(newMovies);
+              await Bucket.create(newDocuments);
+
+              res.send({
+                user: userWithoutPassword
+              });
+            } catch (error) {
+              console.log(error);
+            }
           });
         });
       }
     } catch (error) {
-      res.status(500).json({ error, success: false });
+      res.status(500).send({ error, success: false });
     }
   },
 
@@ -56,7 +88,14 @@ module.exports = {
           process.env.SECRET,
           { expiresIn: 3600 * 24 },
           (err, token) => {
+            const userWithoutPassword = _.pick(user, [
+              "id",
+              "username",
+              "email"
+            ]);
+
             return res.json({
+              user: userWithoutPassword,
               success: true,
               token: "Bearer " + token
             });
