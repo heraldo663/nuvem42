@@ -35,10 +35,8 @@ beforeAll(async () => {
   bucketId = resbucket.body.id;
 });
 
-afterEach(() => {
-  Assets.destroy({ where: {} });
-});
 afterAll(() => {
+  Assets.destroy({ where: {} });
   User.destroy({ where: {} });
 });
 
@@ -63,7 +61,7 @@ describe("POST /api/bucket/:bucket_id/assets", () => {
 
     console.log(res.body);
 
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(200);
     expect(res.body).toHaveProperty("bucketId", bucketId);
   });
 });
@@ -78,11 +76,11 @@ describe("DELETE /api/bucket/:bucket_id/assets", () => {
 
     console.log(asset.body);
     const res = await request(server)
-      .delete(`/api/bucket/${bucketId}/assets/${asset.id}`)
+      .delete(`/api/bucket/${bucketId}/assets/${asset.body.id}`)
       .set("Authorization", token)
       .set("Content-Type", "application/json");
 
-    expect(res.status).toBe(500);
-    expect(res.body.body).toHaveProperty("success", true);
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty("success", true);
   });
 });
