@@ -49,7 +49,7 @@ module.exports = {
                 rootBucketId: root.id,
                 userId: user.id
               };
-              const newMovies = {
+              const newVideos = {
                 bucket: "videos",
                 rootBucketId: root.id,
                 userId: user.id
@@ -61,7 +61,7 @@ module.exports = {
               };
 
               await Bucket.create(newMusic);
-              await Bucket.create(newMovies);
+              await Bucket.create(newVideos);
               await Bucket.create(newDocuments);
 
               res.send({
