@@ -5,10 +5,11 @@ const { Bucket } = require("../models");
 module.exports = {
   async getBuckets(req, res) {
     try {
+      const root = await Bucket.findOne({ name: "root" });
       const buckets = await Bucket.findAll({
         where: {
           userId: req.user.id,
-          rootBucketId: null
+          rootBucketId: root.id
         }
       });
 
@@ -33,9 +34,10 @@ module.exports = {
   },
   async createBucket(req, res) {
     try {
+      const root = await Bucket.findOne({ name: "root" });
       const newBucket = {
         bucket: req.body.bucket,
-        rootBucketId: req.body.rootBucketId || null,
+        rootBucketId: req.body.rootBucketId || root.id,
         userId: req.user.id
       };
 

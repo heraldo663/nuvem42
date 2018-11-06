@@ -42,8 +42,7 @@ module.exports = {
                 rootBucketId: null,
                 userId: user.id
               };
-              consr root = await Bucket.create(newRoot);
-
+              const root = await Bucket.create(newRoot);
 
               const newMusic = {
                 bucket: "musica",
