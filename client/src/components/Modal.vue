@@ -31,10 +31,11 @@
 
 <script>
 export default {
+  props: ["rootBucketId"],
   data() {
     return {
       bucket: {},
-      name
+      name: ""
     };
   },
   methods: {
@@ -43,7 +44,10 @@ export default {
     },
     async handleCreateDir() {
       try {
-        const res = await this.axios.post("/api/bucket", { bucket: this.name });
+        const res = await this.axios.post("/api/bucket", {
+          bucket: this.name,
+          rootBucketId: this.rootBucketId
+        });
         this.bucket = { ...res.data };
         this.handleSubmit();
       } catch (error) {

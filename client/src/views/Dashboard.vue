@@ -9,6 +9,7 @@
                 <i class="fas fa-arrow-circle-left fa-lg mr-3 text-primary"></i>
               </small>Arquivos
             </th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -16,11 +17,17 @@
             <td>
               <a href="#" @click.prevent="handleClickOnDirs(bucket.id)"> <i class="fas fa-folder fa-lg"></i> {{bucket.bucket}}</a>
             </td>
+            <td>
+              <a href="#" @click.prevent="handleDeleteDirs(bucket.id)"><i class="fas fa-trash-alt text-danger"></i></a>
+            </td>
           </tr>
           <tr v-for="(asset) in assets" :key="asset.id">
             <td>
               <a href="#" @click.prevent="handleDownload(asset.url, asset.name)" > <i class="fas fa-file fa-lg text-info"></i> {{asset.name}}</a>
               <a id="target" style="display: none"></a>
+            </td>
+            <td>
+              <a href="#" @click.prevent="handleDeleteAssets(asset.id)"><i class="fas fa-trash-alt text-danger"></i></a>
             </td>
           </tr>
           <tr>
@@ -31,7 +38,7 @@
           </tr>
         </tbody>
       </table>
-      <Modal @newBucket="handleNewBucket"></Modal>
+      <Modal @newBucket="handleNewBucket" :rootBucketId="rootBucketId"></Modal>
     </div>
   </div>
 </template>
@@ -47,7 +54,8 @@ export default {
       isRoot: true,
       buckets: [],
       assets: {},
-      prevState: []
+      prevState: [],
+      rootBucketId: ""
     };
   },
   methods: {
@@ -58,8 +66,13 @@ export default {
 
         this.buckets = resBucket.data;
         this.assets = resAsset.data;
+        this.rootBucketId = bucketId;
         this.isRoot = false;
-        this.prevState.push({ buckets: this.buckets, assets: this.assets });
+        this.prevState.push({
+          buckets: this.buckets,
+          assets: this.assets,
+          rootBucketId: bucketId
+        });
       } catch (error) {
         console.log(error);
       }
@@ -78,9 +91,12 @@ export default {
     },
 
     handleBackState() {
-      let { buckets, assets } = this.prevState[this.prevState.length - 2];
+      let { buckets, assets, rootBucketId } = this.prevState[
+        this.prevState.length - 2
+      ];
       this.buckets = buckets;
       this.assets = assets;
+      this.rootBucketId = rootBucketId;
       this.prevState.pop();
 
       if (this.prevState.length === 1) {
@@ -89,6 +105,23 @@ export default {
     },
     handleNewBucket(e) {
       this.buckets.push(e);
+    },
+    async handleDeleteDirs(bucketId) {
+      try {
+        const res = await this.axios.delete(`/api/bucket/${bucketId}`);
+        if (res.data.success) {
+          let filteredBuckets = this.buckets.filter(bucket => {
+            if (bucket.id != bucketId) {
+              return true;
+            } else {
+              return false;
+            }
+          });
+          this.buckets = filteredBuckets;
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
   },
   async created() {
