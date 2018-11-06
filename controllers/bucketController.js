@@ -35,7 +35,7 @@ module.exports = {
     try {
       const newBucket = {
         bucket: req.body.bucket,
-        rootBucketId: req.body.bucketId || null,
+        rootBucketId: req.body.rootBucketId || null,
         userId: req.user.id
       };
 

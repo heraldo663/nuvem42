@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev:server": "NODE_ENV=development nodemon ./bin/www",
-    "dev:client": "npm start --prefix client",
+    "dev:client": "npm run serve --prefix client",
     "client:build": "npm run build --prefix client",
     "test": "jest --detectOpenHandles",
     "test:watch": "jest --watchAll --verbose --detectOpenHandles",

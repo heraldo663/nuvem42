@@ -37,19 +37,27 @@ module.exports = {
                 "username",
                 "email"
               ]);
+              const newRoot = {
+                bucket: "root",
+                rootBucketId: null,
+                userId: user.id
+              };
+              consr root = await Bucket.create(newRoot);
+
+
               const newMusic = {
                 bucket: "musica",
-                rootBucketId: null,
+                rootBucketId: root.id,
                 userId: user.id
               };
               const newMovies = {
                 bucket: "videos",
-                rootBucketId: null,
+                rootBucketId: root.id,
                 userId: user.id
               };
               const newDocuments = {
                 bucket: "documentos",
-                rootBucketId: null,
+                rootBucketId: root.id,
                 userId: user.id
               };
 
