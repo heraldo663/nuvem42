@@ -14,12 +14,12 @@
         <tbody>
           <tr v-for="(bucket) in buckets" :key="bucket.id">
             <td>
-              <a href="#" v-on:click.prevent="handleClickOnDirs(bucket.id)"> <i class="fas fa-folder fa-lg"></i> {{bucket.bucket}}</a>
+              <a href="#" @click.prevent="handleClickOnDirs(bucket.id)"> <i class="fas fa-folder fa-lg"></i> {{bucket.bucket}}</a>
             </td>
           </tr>
           <tr v-for="(asset) in assets" :key="asset.id">
             <td>
-              <a href="#" v-on:click.prevent="handleDownload(asset.url, asset.name)" > <i class="fas fa-file fa-lg text-info"></i> {{asset.name}}</a>
+              <a href="#" @click.prevent="handleDownload(asset.url, asset.name)" > <i class="fas fa-file fa-lg text-info"></i> {{asset.name}}</a>
               <a id="target" style="display: none"></a>
             </td>
           </tr>
@@ -31,7 +31,7 @@
           </tr>
         </tbody>
       </table>
-      <Modal></Modal>
+      <Modal @newBucket="handleNewBucket"></Modal>
     </div>
   </div>
 </template>
@@ -45,7 +45,7 @@ export default {
   data() {
     return {
       isRoot: true,
-      buckets: {},
+      buckets: [],
       assets: {},
       prevState: []
     };
@@ -76,14 +76,7 @@ export default {
       document.body.appendChild(link);
       link.click();
     },
-    async handleCreateDir() {
-      try {
-        const res = this.axios.post("/api/bucket");
-        this.bucket = { ...res.data };
-      } catch (error) {
-        console.log(error);
-      }
-    },
+
     handleBackState() {
       let { buckets, assets } = this.prevState[this.prevState.length - 2];
       this.buckets = buckets;
@@ -93,6 +86,9 @@ export default {
       if (this.prevState.length === 1) {
         this.isRoot = true;
       }
+    },
+    handleNewBucket(e) {
+      this.buckets.push(e);
     }
   },
   async created() {

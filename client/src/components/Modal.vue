@@ -10,22 +10,46 @@
         </div>
         
         <!-- Modal body -->
-        <div class="modal-body">
-          <form>
-            <div class="form-group">
-              <label for="name">Nome da Pasta</label>
-              <input type="text" name="name" class="form-control">
-              <input type="submit" class="btn btn-success" value="Criar">
-            </div>
-          </form>
-        </div>
-        
-        <!-- Modal footer
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
-        </div> -->
+        <form @submit.prevent="handleCreateDir">
+          <div class="modal-body">
+              <div class="form-group">
+                <label for="name">Nome da Pasta</label>
+                <input type="text" name="name" v-model="name" class="form-control">
+              </div>
+          </div>
+          
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <input type="submit" class="btn btn-success" value="Criar">
+          </div>
+        </form>
         
       </div>
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      bucket: {},
+      name
+    };
+  },
+  methods: {
+    handleSubmit() {
+      this.$emit("newBucket", this.bucket);
+    },
+    async handleCreateDir() {
+      try {
+        const res = await this.axios.post("/api/bucket", { bucket: this.name });
+        this.bucket = { ...res.data };
+        this.handleSubmit();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+};
+</script>

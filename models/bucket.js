@@ -13,10 +13,6 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "userId",
       onDelete: "CASCADE"
     });
-    Bucket.hasMany(models.Assets, {
-      foreignKey: "bucketId",
-      onDelete: "CASCADE"
-    });
 
     Bucket.belongsTo(models.Bucket, {
       foreignKey: "rootBucketId",

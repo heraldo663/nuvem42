@@ -7,6 +7,7 @@ module.exports = {
     try {
       const root = await Bucket.findOne({
         name: "root",
+        rootBucketId: null,
         userId: req.user.id
       });
       const buckets = await Bucket.findAll({
@@ -39,6 +40,7 @@ module.exports = {
     try {
       const root = await Bucket.findOne({
         name: "root",
+        rootBucketId: null,
         userId: req.user.id
       });
       const newBucket = {
