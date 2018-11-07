@@ -38,8 +38,7 @@ export default {
       email: "",
       password: "",
       rememberMe: false,
-      error: this.$store.getters.error,
-      interval: function() {}
+      error: this.$store.getters.error
     };
   },
   name: "login",

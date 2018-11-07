@@ -15,15 +15,17 @@
         <tbody>
           <tr v-for="(bucket) in buckets" :key="bucket.id">
             <td>
-              <a href="#" @click.prevent="handleClickOnDirs(bucket.id)"> <i class="fas fa-folder fa-lg"></i> {{bucket.bucket}}</a>
+              <a href="#" @click.prevent="handleClickOnDirs(bucket.id)"> <i class="fas fa-folder fa-lg"></i>
+                {{bucket.bucket}}</a>
             </td>
             <td>
               <a href="#" @click.prevent="handleDeleteDirs(bucket.id)"><i class="fas fa-trash-alt text-danger"></i></a>
             </td>
           </tr>
-          <tr v-for="(asset) in assets" :key="asset.id">
+          <tr v-for="(asset, index) in assets" :key="index+999">
             <td>
-              <a href="#" @click.prevent="handleDownload(asset.url, asset.name)" > <i class="fas fa-file fa-lg text-info"></i> {{asset.name}}</a>
+              <a href="#" @click.prevent="handleDownload(asset.url, asset.name)"> <i class="fas fa-file fa-lg text-info"></i>
+                {{asset.name}}</a>
               <a id="target" style="display: none"></a>
             </td>
             <td>
@@ -31,10 +33,14 @@
             </td>
           </tr>
           <tr>
-            <td>
-              <button class="btn btn-info mr-4" data-toggle="modal" data-target="#CreateDirModal"> <i class="fas fa-plus fa-lg mr-2"></i>Adicionar Pasta</button> 
-              
-              <button class="btn btn-warning"><i class="fas fa-upload fa-lg mr-2"></i>Upload</button></td>
+            <td class="d-sm-flex justify-content-start">
+              <button class="btn btn-info mr-4" data-toggle="modal" data-target="#CreateDirModal"> <i class="fas fa-plus fa-lg mr-2"></i>Adicionar
+                Pasta</button>
+              <div class="custom-file">
+                <input type="file" v-on:change="handleUpload" style="display: none" id="customFile">
+                <label class="btn btn-warning" for="customFile"><i class="fas fa-upload mr-2"></i>Upload</label>
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -45,9 +51,13 @@
 
 <script>
 import Modal from "../components/Modal";
+import TableRowBucket from "../components/TableRowBucket";
+import TableRowAssets from "../components/TableRowAssets";
 export default {
   components: {
-    Modal
+    Modal,
+    TableRowBucket,
+    TableRowAssets
   },
   data() {
     return {
@@ -55,7 +65,8 @@ export default {
       buckets: [],
       assets: {},
       prevState: [],
-      rootBucketId: ""
+      rootBucketId: "",
+      file: {}
     };
   },
   methods: {
@@ -104,6 +115,7 @@ export default {
       }
     },
     handleNewBucket(e) {
+      console.log(this.buckets);
       this.buckets.push(e);
     },
     async handleDeleteDirs(bucketId) {
@@ -122,13 +134,43 @@ export default {
       } catch (error) {
         console.log(error);
       }
+    },
+    async handleUpload(e) {
+      this.file = e.target.files[0];
+      const formData = new FormData();
+      formData.append("file", this.file);
+
+      const res = await this.axios.post(
+        `/api/bucket/${this.rootBucketId}/assets/`,
+        formData
+      );
+
+      this.assets.push(res.data);
+    },
+    async handleDeleteAssets(assetId) {
+      this.axios.delete(`/api/bucket/${this.rootBucketId}/assets/${assetId}`);
+
+      const filteredAssets = this.assets.filter(asset => {
+        return asset.id !== assetId;
+      });
+
+      this.assets = filteredAssets;
     }
   },
   async created() {
     try {
-      const res = await this.axios.get("/api/bucket");
-      this.buckets = res.data;
-      this.prevState.push({ buckets: this.buckets, assets: {} });
+      const resBucket = await this.axios.get("/api/bucket");
+      this.buckets = resBucket.data.buckets;
+      this.rootBucketId = resBucket.data.rootId;
+      const resAsset = await this.axios.get(
+        `/api/bucket/${this.rootBucketId}/assets`
+      );
+      this.assets = resAsset.data;
+      this.prevState.push({
+        buckets: this.buckets,
+        assets: this.assets,
+        rootBucketId: this.rootBucketId
+      });
     } catch (error) {
       console.log("fail to get buckets");
     }

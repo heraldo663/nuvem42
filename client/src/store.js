@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import axios from "axios";
 
 Vue.use(Vuex);
 
@@ -20,6 +21,7 @@ export default new Vuex.Store({
       commit("setAuthUser", {
         authToken: authData.token
       });
+      axios.defaults.headers.common["Authorization"] = authData.token;
       if (authData.rememberMe) {
         localStorage.setItem("authToken", authData.token);
       }

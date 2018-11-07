@@ -40,7 +40,6 @@ export default {
       let isLoggedin = !!(
         this.$store.getters.authToken || localStorage.getItem("authToken")
       );
-      console.log(isLoggedin);
       if (isLoggedin) {
         this.isAuthenticated = true;
       } else {

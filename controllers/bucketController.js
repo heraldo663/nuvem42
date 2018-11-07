@@ -6,9 +6,11 @@ module.exports = {
   async getBuckets(req, res) {
     try {
       const root = await Bucket.findOne({
-        name: "root",
-        rootBucketId: null,
-        userId: req.user.id
+        where: {
+          userId: req.user.id,
+          bucket: "root",
+          rootBucketId: null
+        }
       });
       const buckets = await Bucket.findAll({
         where: {
@@ -17,7 +19,10 @@ module.exports = {
         }
       });
 
-      return res.json(buckets);
+      return res.json({
+        buckets,
+        rootId: root.id
+      });
     } catch (error) {
       res.status(500).json({ error, success: false });
     }
@@ -39,9 +44,11 @@ module.exports = {
   async createBucket(req, res) {
     try {
       const root = await Bucket.findOne({
-        name: "root",
-        rootBucketId: null,
-        userId: req.user.id
+        where: {
+          userId: req.user.id,
+          bucket: "root",
+          rootBucketId: null
+        }
       });
       const newBucket = {
         bucket: req.body.bucket,

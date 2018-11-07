@@ -39,9 +39,6 @@ export default {
     };
   },
   methods: {
-    handleSubmit() {
-      this.$emit("newBucket", this.bucket);
-    },
     async handleCreateDir() {
       try {
         const res = await this.axios.post("/api/bucket", {
@@ -49,7 +46,7 @@ export default {
           rootBucketId: this.rootBucketId
         });
         this.bucket = { ...res.data };
-        this.handleSubmit();
+        this.$emit("newBucket", this.bucket);
       } catch (error) {
         console.log(error);
       }

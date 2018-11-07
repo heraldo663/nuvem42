@@ -40,24 +40,24 @@ module.exports = {
               const newRoot = {
                 bucket: "root",
                 rootBucketId: null,
-                userId: user.id
+                userId: userWithoutPassword.id
               };
               const root = await Bucket.create(newRoot);
 
               const newMusic = {
                 bucket: "musica",
                 rootBucketId: root.id,
-                userId: user.id
+                userId: userWithoutPassword.id
               };
               const newVideos = {
                 bucket: "videos",
                 rootBucketId: root.id,
-                userId: user.id
+                userId: userWithoutPassword.id
               };
               const newDocuments = {
                 bucket: "documentos",
                 rootBucketId: root.id,
-                userId: user.id
+                userId: userWithoutPassword.id
               };
 
               await Bucket.create(newMusic);
