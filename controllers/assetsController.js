@@ -1,7 +1,6 @@
 const { Assets } = require("../models");
 const fs = require("fs");
-const path = require("path");
-const baseDir = path.join(__dirname, `../${process.env.MEDIA_ROOT}`);
+const baseDir = process.env.MEDIA_ROOT;
 
 // @TODO: implemente validation
 module.exports = {
@@ -41,7 +40,12 @@ module.exports = {
   async deleteAssets(req, res) {
     try {
       const asset = await Assets.findById(req.params.id);
-      fs.unlinkSync(`${baseDir}/${req.user.username}/${asset.filename}`);
+      let dirName = req.user.username.split(" ");
+      dirName = dirName.join("-");
+      console.log(`${baseDir}/${dirName}/${asset.filename}`);
+      fs.unlink(`${baseDir}/${dirName}/${asset.filename}`, err =>
+        console.log(err)
+      );
       asset.destroy();
       res.send({ success: true });
     } catch (error) {
