@@ -1,5 +1,6 @@
 const multer = require("multer");
 const fs = require("fs");
+const mkdirp = require('mkdirp');
 
 const baseDir = process.env.MEDIA_ROOT;
 
@@ -10,7 +11,7 @@ const storage = multer.diskStorage({
     dirName = dirName.join("-");
 
     if (!fs.existsSync(`${baseDir}/${dirName}`)) {
-      fs.mkdir(`${baseDir}/${dirName}`, err => console.log(err));
+      mkdirp(`${baseDir}/${dirName}`, err => console.log(err));
     }
     cb(err, `${baseDir}/${dirName}`);
   },

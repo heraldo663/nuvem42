@@ -11,7 +11,7 @@ axios.defaults.headers.common["Authorization"] = localStorage.getItem(
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 let config = {
-  baseURL: "http://nuvem42.ddns.net/"
+  baseURL: process.env.BASE_URL || "http://nuvem42.ddns.net/"
   // timeout: 60 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
 };
