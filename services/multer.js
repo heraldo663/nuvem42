@@ -1,8 +1,7 @@
-const multer = require('multer');
-const path = require('path')
-const fs = require('fs');
+const multer = require("multer");
+const fs = require("fs");
 
-const baseDir = path.join(__dirname, `../${process.env.MEDIA_ROOT}`);
+const baseDir = process.env.MEDIA_ROOT;
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -10,13 +9,16 @@ const storage = multer.diskStorage({
     if (!fs.existsSync(`${baseDir}/${req.user.username}`)) {
       fs.mkdirSync(`${baseDir}/${req.user.username}`);
     }
-    cb(err, `${baseDir}/${req.user.username}`)
+    cb(err, `${baseDir}/${req.user.username}`);
   },
   filename: (req, file, cb) => {
-    const name = file.originalname.toLowerCase().split(' ').join('-');
+    const name = file.originalname
+      .toLowerCase()
+      .split(" ")
+      .join("-");
 
-    cb(null, Date.now() + '-' + name);
+    cb(null, Date.now() + "-" + name);
   }
-})
+});
 
 module.exports = storage;
