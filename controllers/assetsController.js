@@ -41,7 +41,6 @@ module.exports = {
   async deleteAssets(req, res) {
     try {
       const asset = await Assets.findById(req.params.id);
-      console.log(asset);
       fs.unlinkSync(`${baseDir}/${req.user.username}/${asset.filename}`);
       asset.destroy();
       res.send({ success: true });
