@@ -6,10 +6,12 @@ const baseDir = process.env.MEDIA_ROOT;
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     let err = null;
-    if (!fs.existsSync(`${baseDir}/${req.user.username}`)) {
-      fs.mkdirSync(`${baseDir}/${req.user.username}`);
+    let dirName = req.user.username.split(" ");
+    dirName = dirName.join("-");
+    if (!fs.existsSync(`${baseDir}/${dirName}`)) {
+      fs.mkdirSync(`${baseDir}/${dirName}`);
     }
-    cb(err, `${baseDir}/${req.user.username}`);
+    cb(err, `${baseDir}/${dirName}`);
   },
   filename: (req, file, cb) => {
     const name = file.originalname
