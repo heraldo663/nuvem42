@@ -120,7 +120,7 @@ export default {
     },
     async handleDeleteDirs(bucketId) {
       try {
-        const res = await this.axios.delete(`/api/bucket/${bucketId}`);
+        const res = await this.axios.delete(`http://nuvem42.ddns.net/api/bucket/${bucketId}`);
         if (res.data.success) {
           let filteredBuckets = this.buckets.filter(bucket => {
             if (bucket.id != bucketId) {

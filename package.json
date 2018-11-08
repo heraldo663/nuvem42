@@ -7,6 +7,7 @@
     "dev:server": "NODE_ENV=development nodemon ./bin/www",
     "dev:client": "npm run serve --prefix client",
     "build:client": "npm run build --prefix client",
+    "install:client": "npm install --prefix client",
     "test": "jest --detectOpenHandles",
     "test:watch": "jest --watchAll --verbose --detectOpenHandles",
     "test:coverage": "jest --coverage"
