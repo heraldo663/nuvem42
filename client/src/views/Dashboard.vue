@@ -115,7 +115,6 @@ export default {
       }
     },
     handleNewBucket(e) {
-      console.log(this.buckets);
       this.buckets.push(e);
     },
     async handleDeleteDirs(bucketId) {
