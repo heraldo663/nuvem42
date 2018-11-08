@@ -26,7 +26,7 @@ app.use(cors());
 app.use(
   "/media",
   passport.authenticate("jwt", { session: false }),
-  express.static(__dirname + "/media")
+  express.static(process.env.MEDIA_ROOT)
 );
 app.use(express.static(path.join(__dirname, "client/dist")));
 
