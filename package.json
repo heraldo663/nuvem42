@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev:server": "NODE_ENV=development nodemon ./bin/www",
-    "dev:client": "npm run serve --prefix client",
+    "dev:client": "npm run serve --prefix client  --mode development",
     "install:client": "npm install --prefix client",
     "build:client": "npm run build --prefix client",
     "install:client": "npm install --prefix client",

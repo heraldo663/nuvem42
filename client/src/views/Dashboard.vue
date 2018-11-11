@@ -93,7 +93,8 @@ export default {
         method: "GET",
         responseType: "blob"
       });
-      const url = window.URL.createObjectURL(new Blob([file.data]));
+      console.log(file);
+      const url = window.URL.createObjectURL(file.data);
       const link = document.createElement("a");
       link.href = url;
       link.setAttribute("download", filename);
@@ -119,7 +120,9 @@ export default {
     },
     async handleDeleteDirs(bucketId) {
       try {
-        const res = await this.axios.delete(`http://nuvem42.ddns.net/api/bucket/${bucketId}`);
+        const res = await this.axios.delete(
+          `http://nuvem42.ddns.net/api/bucket/${bucketId}`
+        );
         if (res.data.success) {
           let filteredBuckets = this.buckets.filter(bucket => {
             if (bucket.id != bucketId) {

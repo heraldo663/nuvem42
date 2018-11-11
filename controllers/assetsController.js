@@ -17,6 +17,9 @@ module.exports = {
     }
   },
   async createAssets(req, res) {
+    // TODO: refatorar dirname
+    let dirName = req.user.username.split(" ");
+    dirName = dirName.join("-");
     try {
       const newAsset = {
         name: req.file.originalname,
@@ -25,9 +28,7 @@ module.exports = {
         filename: req.file.filename,
         size: req.file.size,
         bucketId: req.params.bucket_id,
-        url: `${process.env.APP_URL}${process.env.MEDIA_ROOT}/${
-          req.user.username
-        }/${req.file.filename}`
+        url: `${process.env.APP_URL}media/${dirName}/${req.file.filename}`
       };
 
       const asset = await Assets.create(newAsset);

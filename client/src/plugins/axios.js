@@ -2,6 +2,7 @@
 
 import Vue from "vue";
 import axios from "axios";
+import configKey from "../../config.json";
 
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || "";
@@ -11,7 +12,7 @@ axios.defaults.headers.common["Authorization"] = localStorage.getItem(
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 let config = {
-  baseURL: process.env.BASE_URL || "http://nuvem42.ddns.net/"
+  baseURL: configKey.apiUrl
   // timeout: 60 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
 };
