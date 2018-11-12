@@ -1,8 +1,12 @@
 <template>
   <div id="app">
     <Navbar></Navbar>
-    <router-view/>
-    <Footer></Footer>
+    <div class="content">
+     <router-view/>
+    </div>
+    <div class="footer">
+      <Footer></Footer>
+    </div>
   </div>
 </template>
 
@@ -19,4 +23,10 @@ export default {
 
 <style lang="scss">
 @import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+.content {
+  min-height: calc(100vh - 160px);
+}
+.footer {
+  height: 50px;
+}
 </style>

@@ -1,7 +1,8 @@
 export default {
   state: {
     authToken: null || localStorage.getItem("authToken"),
-    error: ""
+    error: "",
+    username: ""
   },
   mutations: {
     setAuthUser(state, userData) {
@@ -15,6 +16,9 @@ export default {
     },
     unSetError(state) {
       state.error = "";
+    },
+    setUsername(state, name) {
+      state.username = name;
     }
   },
   actions: {
@@ -24,13 +28,13 @@ export default {
           email: authData.email,
           password: authData.password
         });
-        const { token } = res.data;
+        const { token, user } = res.data;
+        commit("setUsername", user.username);
         window.axios.defaults.headers.common["Authorization"] = token;
         if (authData.rememberMe) {
           localStorage.setItem("authToken", token);
         }
         commit("setAuthUser", { authToken: token });
-        this.$router.push("/");
       } catch (error) {
         commit("setError", {
           error: error.response.data.error

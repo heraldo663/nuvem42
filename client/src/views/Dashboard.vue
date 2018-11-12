@@ -50,26 +50,22 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
 import Modal from "../components/Modal";
-import TableRowBucket from "../components/TableRowBucket";
-import TableRowAssets from "../components/TableRowAssets";
 export default {
   components: {
-    Modal,
-    TableRowBucket,
-    TableRowAssets
+    Modal
   },
   data() {
     return {
-      isRoot: true,
-      buckets: [],
-      assets: {},
-      prevState: [],
-      rootBucketId: "",
       file: {}
     };
   },
+  computed: {
+    ...mapGetters(["buckets", "rootBucketId", "isRoot", "assets"])
+  },
   methods: {
+    ...mapActions(["getAllbuckets", "getAllAssets", "addToPrevState"]),
     async handleClickOnDirs(bucketId) {
       try {
         const resBucket = await this.axios.get(`/api/bucket/${bucketId}`);
@@ -160,22 +156,9 @@ export default {
     }
   },
   async created() {
-    try {
-      const resBucket = await this.axios.get("/api/bucket");
-      this.buckets = resBucket.data.buckets;
-      this.rootBucketId = resBucket.data.rootId;
-      const resAsset = await this.axios.get(
-        `/api/bucket/${this.rootBucketId}/assets`
-      );
-      this.assets = resAsset.data;
-      this.prevState.push({
-        buckets: this.buckets,
-        assets: this.assets,
-        rootBucketId: this.rootBucketId
-      });
-    } catch (error) {
-      console.log("fail to get buckets");
-    }
+    await this.getAllbuckets();
+    await this.getAllAssets();
+    await this.addToPrevState();
   }
 };
 </script>

@@ -23,7 +23,6 @@
               </label>
             </div>
             <button class="btn btn-lg btn-primary btn-block" type="submit">Entrar</button>
-            <p class="mt-5 mb-3 text-muted">&copy; 2017-2018</p>
           </form>
         </div>
       </div>
@@ -48,12 +47,13 @@ export default {
     }
   },
   methods: {
-    onSubmit() {
-      this.$store.dispatch("login", {
+    async onSubmit() {
+      await this.$store.dispatch("login", {
         email: this.email,
         password: this.password,
         rememberMe: this.rememberMe
       });
+      this.$router.push("/");
     }
   }
 };
