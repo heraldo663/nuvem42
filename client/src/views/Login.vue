@@ -4,7 +4,7 @@
       <div class="row">
         <div class="col-md-6 offset-md-3">
           <div class="alert alert-danger" role="alert" v-if="error">
-            {{error}}
+            {{error.error}}
           </div>
           <form class="form-signin" @submit.prevent="onSubmit">
             <h1 class="h3 mb-3 font-weight-normal">Login</h1>
@@ -32,38 +32,29 @@
 </template>
 
 <script>
+// import mapGetters from "vuex";
 export default {
   data() {
     return {
       email: "",
       password: "",
-      rememberMe: false,
-      error: this.$store.getters.error
+      rememberMe: false
     };
   },
   name: "login",
+  computed: {
+    error() {
+      return this.$store.getters.error;
+    }
+  },
   methods: {
-    async onSubmit() {
-      try {
-        const res = await this.axios.post("/api/auth/login", {
-          email: this.email,
-          password: this.password
-        });
-        this.$store.dispatch("login", {
-          token: res.data.token,
-          rememberMe: this.rememberMe
-        });
-        this.$router.push("/");
-      } catch (error) {
-        this.error = error.response.data.error;
-        setTimeout(() => {
-          this.error = "";
-        }, 3500);
-      }
+    onSubmit() {
+      this.$store.dispatch("login", {
+        email: this.email,
+        password: this.password,
+        rememberMe: this.rememberMe
+      });
     }
   }
 };
 </script>
-
-<style scoped>
-</style>
