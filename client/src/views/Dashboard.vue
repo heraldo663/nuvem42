@@ -44,7 +44,7 @@
           </tr>
         </tbody>
       </table>
-      <Modal @newBucket="handleNewBucket" :rootBucketId="rootBucketId"></Modal>
+      <Modal></Modal>
     </div>
   </div>
 </template>
@@ -56,107 +56,47 @@ export default {
   components: {
     Modal
   },
-  data() {
-    return {
-      file: {}
-    };
-  },
   computed: {
     ...mapGetters(["buckets", "rootBucketId", "isRoot", "assets"])
   },
   methods: {
-    ...mapActions(["getAllbuckets", "getAllAssets", "addToPrevState"]),
+    ...mapActions([
+      "getAllRootbuckets",
+      "getAllAssets",
+      "addToPrevState",
+      "getAllBuckets",
+      "backToPrevState",
+      "downloadFile",
+      "deleteDirs",
+      "uploadFile",
+      "deleteAssets"
+    ]),
     async handleClickOnDirs(bucketId) {
-      try {
-        const resBucket = await this.axios.get(`/api/bucket/${bucketId}`);
-        const resAsset = await this.axios.get(`/api/bucket/${bucketId}/assets`);
-
-        this.buckets = resBucket.data;
-        this.assets = resAsset.data;
-        this.rootBucketId = bucketId;
-        this.isRoot = false;
-        this.prevState.push({
-          buckets: this.buckets,
-          assets: this.assets,
-          rootBucketId: bucketId
-        });
-      } catch (error) {
-        console.log(error);
-      }
+      await this.getAllBuckets(bucketId);
+      await this.getAllAssets();
+      await this.addToPrevState();
     },
-    async handleDownload(urlLink, filename) {
-      const file = await this.axios.get(urlLink, {
-        method: "GET",
-        responseType: "blob"
-      });
-      console.log(file);
-      const url = window.URL.createObjectURL(file.data);
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", filename);
-      document.body.appendChild(link);
-      link.click();
-    },
-
     handleBackState() {
-      let { buckets, assets, rootBucketId } = this.prevState[
-        this.prevState.length - 2
-      ];
-      this.buckets = buckets;
-      this.assets = assets;
-      this.rootBucketId = rootBucketId;
-      this.prevState.pop();
-
-      if (this.prevState.length === 1) {
-        this.isRoot = true;
-      }
+      this.backToPrevState();
     },
-    handleNewBucket(e) {
-      this.buckets.push(e);
-    },
-    async handleDeleteDirs(bucketId) {
-      try {
-        const res = await this.axios.delete(
-          `http://nuvem42.ddns.net/api/bucket/${bucketId}`
-        );
-        if (res.data.success) {
-          let filteredBuckets = this.buckets.filter(bucket => {
-            if (bucket.id != bucketId) {
-              return true;
-            } else {
-              return false;
-            }
-          });
-          this.buckets = filteredBuckets;
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    async handleUpload(e) {
-      this.file = e.target.files[0];
-      const formData = new FormData();
-      formData.append("file", this.file);
-
-      const res = await this.axios.post(
-        `/api/bucket/${this.rootBucketId}/assets/`,
-        formData
-      );
-
-      this.assets.push(res.data);
-    },
-    async handleDeleteAssets(assetId) {
-      this.axios.delete(`/api/bucket/${this.rootBucketId}/assets/${assetId}`);
-
-      const filteredAssets = this.assets.filter(asset => {
-        return asset.id !== assetId;
+    handleDownload(urlLink, filename) {
+      this.downloadFile({
+        urlLink,
+        filename
       });
-
-      this.assets = filteredAssets;
+    },
+    handleDeleteDirs(bucketId) {
+      this.deleteDirs(bucketId);
+    },
+    handleUpload(e) {
+      this.uploadFile(e);
+    },
+    handleDeleteAssets(assetId) {
+      this.deleteAssets(assetId);
     }
   },
   async created() {
-    await this.getAllbuckets();
+    await this.getAllRootbuckets();
     await this.getAllAssets();
     await this.addToPrevState();
   }

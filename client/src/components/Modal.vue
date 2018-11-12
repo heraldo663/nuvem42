@@ -31,25 +31,14 @@
 
 <script>
 export default {
-  props: ["rootBucketId"],
   data() {
     return {
-      bucket: {},
       name: ""
     };
   },
   methods: {
     async handleCreateDir() {
-      try {
-        const res = await this.axios.post("/api/bucket", {
-          bucket: this.name,
-          rootBucketId: this.rootBucketId
-        });
-        this.bucket = { ...res.data };
-        this.$emit("newBucket", this.bucket);
-      } catch (error) {
-        console.log(error);
-      }
+      this.$store.dispatch("createDirs", this.name);
     }
   }
 };
