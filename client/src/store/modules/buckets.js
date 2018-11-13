@@ -1,19 +1,19 @@
 export default {
   state: {
     isRoot: true,
-    buckets: [],
+    buckets: [{}],
     rootBucketId: "",
     prevState: []
   },
   mutations: {
-    toggleIsRoot(state) {
-      state.isRoot = !state.isRoot;
+    setIsRoot(state, val) {
+      state.isRoot = val;
     },
     setBuckets(state, buckets) {
       state.buckets = buckets;
     },
     addToBuckets(state, bucket) {
-      state.buckets.push(bucket);
+      state.buckets = { ...bucket };
     },
     setRootBucketId(state, payload) {
       state.rootBucketId = payload;
@@ -47,9 +47,9 @@ export default {
     },
     async getAllBuckets({ commit }, bucketId) {
       const res = await window.axios.get(`/api/bucket/${bucketId}`);
-      commit("setBuckets", res.data.buckets);
+      commit("setBuckets", res.data);
       commit("setRootBucketId", bucketId);
-      commit("toggleIsRoot");
+      commit("setIsRoot", false);
     },
     addToPrevState({ commit, getters }) {
       commit("addToPrevState", {
@@ -68,7 +68,7 @@ export default {
       commit("removeLastPrevState");
 
       if (getters.prevState.length === 1) {
-        commit("toggleIsRoot");
+        commit("setIsRoot", true);
       }
     },
     async createDirs({ commit, getters }, name) {
@@ -77,6 +77,7 @@ export default {
           bucket: name,
           rootBucketId: getters.rootBucketId
         });
+        console.log(res.data);
         commit("addToBuckets", res.data);
       } catch (error) {
         console.log(error);

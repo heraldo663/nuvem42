@@ -57,11 +57,6 @@ export default {
     handleUpload(e) {
       this.uploadFile(e);
     }
-  },
-  async created() {
-    await this.getAllRootbuckets();
-    await this.getAllAssets();
-    await this.addToPrevState();
   }
 };
 </script>

@@ -2,7 +2,10 @@
   <table class="table table-bordered">
     <thead>
       <tr>
-        <th scope="col">
+        <th scope="col d-sm-flex justify-content-start">
+          <small @click="handleBackState" v-if="!isRoot">
+            <i class="fas fa-arrow-circle-left fa-lg mr-3 text-primary"></i>
+          </small>
           Arquivos
         </th>
         <th>Ações</th>
@@ -57,22 +60,36 @@ export default {
   methods: {
     ...mapActions([
       "getAllAssets",
-      "getAllRootbuckets",
+      "getAllBuckets",
       "backToPrevState",
       "uploadFile",
-      "addToPrevState"
+      "addToPrevState",
+      "deleteAssets",
+      "downloadFile"
     ]),
     handleBackState() {
       this.backToPrevState();
     },
     handleUpload(e) {
       this.uploadFile(e);
+    },
+    async handleClickOnDirs(bucketId) {
+      await this.getAllBuckets(bucketId);
+      await this.getAllAssets();
+      await this.addToPrevState();
+    },
+    handleDeleteDirs(bucketId) {
+      this.deleteDirs(bucketId);
+    },
+    handleDownload(urlLink, filename) {
+      this.downloadFile({
+        urlLink,
+        filename
+      });
+    },
+    handleDeleteAssets(assetId) {
+      this.deleteAssets(assetId);
     }
-  },
-  async created() {
-    await this.getAllRootbuckets();
-    await this.getAllAssets();
-    await this.addToPrevState();
   }
 };
 </script>

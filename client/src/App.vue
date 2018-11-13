@@ -22,7 +22,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+@import "./assets/css/bootstrap.min.css";
 .content {
   min-height: calc(100vh - 160px);
 }
