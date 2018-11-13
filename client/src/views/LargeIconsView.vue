@@ -24,7 +24,7 @@
       <div v-for="(bucket) in buckets" :key="bucket.id">
         <Bucket :bucket="bucket"></Bucket>
       </div>
-      <div v-for="(asset) in assets" :key="asset.id">
+      <div v-for="(asset) in assets" :key="asset.id +500">
         <Asset :asset="asset"></Asset>
       </div>
     </div>

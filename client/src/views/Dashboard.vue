@@ -1,33 +1,26 @@
 <template>
   <div class="container">
     <Modal></Modal>
-    <nav class="mb-3">
-      <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-        <li class="nav-item">
-          <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home"
-           :aria-selected="viewList" @click="viewList = false">Grid</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile"
-            :aria-selected="viewList" @click="viewList = true">Lista</a>
-        </li>
-      </ul>
-    </nav>
+    <ViewType :viewList="viewList" @changeViewList="viewList = $event"></ViewType>
     <template v-if="viewList">
       <ListView></ListView>
     </template>
     <template v-else>
       <LargeIconsView></LargeIconsView>
     </template>
-
+    <ProgressBar v-if="isUploading"></ProgressBar>
   </div>
 </template>
 
 <script>
 import { mapActions } from "vuex";
-import Modal from "../components/Modal";
 import LargeIconsView from "./LargeIconsView";
 import ListView from "./ListView";
+
+import Modal from "../components/Modal";
+import ViewType from "../components/ViewType";
+import ProgressBar from "../components/ProgressBar";
+
 export default {
   data() {
     return {
@@ -37,10 +30,17 @@ export default {
   components: {
     Modal,
     LargeIconsView,
-    ListView
+    ListView,
+    ViewType,
+    ProgressBar
   },
   methods: {
     ...mapActions(["getAllRootbuckets", "getAllAssets", "addToPrevState"])
+  },
+  computed: {
+    isUploading() {
+      return this.$store.getters.isUploading;
+    }
   },
   async created() {
     await this.getAllRootbuckets();
