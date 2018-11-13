@@ -12,8 +12,8 @@ export default {
     setBuckets(state, buckets) {
       state.buckets = buckets;
     },
-    addToBuckets(state, bucket) {
-      state.buckets = { ...bucket };
+    addToBuckets(state, payload) {
+      state.buckets.push(payload);
     },
     setRootBucketId(state, payload) {
       state.rootBucketId = payload;
