@@ -1,5 +1,5 @@
 <template>
-<nav class="navbar navbar-expand-lg navbar-light mb-5 bg-primary">
+<nav class="navbar navbar-expand-lg navbar-dark mb-5 bg-primary">
   <div class="container">
     <router-link class="navbar-brand" to="/" >Nuvem42</router-link> 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">

@@ -23,9 +23,14 @@ export default {
 
 <style lang="scss">
 $theme-colors: (
-  "primary": #00ff00
+  "primary": #006400
 );
 @import "../node_modules/bootstrap/scss/bootstrap";
+@import url("https://fonts.googleapis.com/css?family=Ubuntu");
+
+body {
+  font-family: "Ubuntu", sans-serif !important;
+}
 .content {
   min-height: calc(100vh - 160px);
 }

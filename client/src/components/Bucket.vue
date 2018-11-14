@@ -50,7 +50,7 @@ export default {
 
 .item-link {
   text-decoration: none;
-  color: #222;
+  color: #444;
   &:hover {
     text-decoration: none;
     color: theme-color("primary");

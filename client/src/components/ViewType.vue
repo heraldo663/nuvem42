@@ -29,6 +29,6 @@ a {
   color: #222;
 }
 .nav-link.active {
-  color: #222;
+  color: #fff;
 }
 </style>

@@ -10,7 +10,7 @@
             <h1 class="h3 mb-3 font-weight-normal">Entrar</h1>
             <div class="form-group">
               <label for="inputEmail" class="sr-only">Email</label>
-              <input type="email" id="inputEmail" v-model.trim.lazy="email" class="form-control" placeholder="Email" required autofocus>
+              <input type="email" id="inputEmail" v-model.trim.lazy="email" class="form-control" placeholder="E-mail" required autofocus>
             </div>
             <div class="form-group">
               <label for="inputPassword" class="sr-only">Senha</label>
