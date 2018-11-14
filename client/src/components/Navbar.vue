@@ -9,7 +9,7 @@
     <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
       <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
         <li class="nav-item">
-          <router-link class="nav-link" v-if="!isAuthenticated" to="/login">Acessar</router-link>
+          <router-link class="nav-link" v-if="!isAuthenticated" to="/login">Entrar</router-link>
         </li>
         <li class="nav-item">
           <router-link class="nav-link" v-if="!isAuthenticated" to="/register">Registro</router-link>

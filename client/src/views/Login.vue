@@ -13,7 +13,7 @@
               <input type="email" id="inputEmail" v-model.trim.lazy="email" class="form-control" placeholder="Email" required autofocus>
             </div>
             <div class="form-group">
-              <label for="inputPassword" class="sr-only">Password</label>
+              <label for="inputPassword" class="sr-only">Senha</label>
               <input type="password" id="inputPassword" v-model.trim.lazy="password" class="form-control" placeholder="Password" required> 
             </div>
             <div class="checkbox mb-3">
@@ -22,7 +22,7 @@
                   false-value=false v-model="rememberMe"> Lembre-se
               </label>
             </div>
-            <button class="btn btn-lg btn-primary btn-block" type="submit">Entrar</button>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Acessar</button>
           </form>
         </div>
       </div>

@@ -20,7 +20,7 @@
               <input type="text" id="name" v-model="name" class="form-control" name="name" placeholder="Nome" required autofocus>
             </div>
             <div class="form-group">
-              <label for="inputPassword" class="sr-only">Password</label>
+              <label for="inputPassword" class="sr-only">Senha</label>
               <input type="password" v-model="password" id="inputPassword" class="form-control" name="password" placeholder="Password" required> 
             </div>
             <button class="btn btn-lg btn-primary btn-block" type="submit">Enviar</button>
