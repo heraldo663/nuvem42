@@ -7,7 +7,7 @@
             {{error.error}}
           </div>
           <form class="form-signin" @submit.prevent="onSubmit">
-            <h1 class="h3 mb-3 font-weight-normal">Login</h1>
+            <h1 class="h3 mb-3 font-weight-normal">Acessar</h1>
             <div class="form-group">
               <label for="inputEmail" class="sr-only">Email</label>
               <input type="email" id="inputEmail" v-model.trim.lazy="email" class="form-control" placeholder="Email" required autofocus>
@@ -19,7 +19,7 @@
             <div class="checkbox mb-3">
               <label>
                 <input type="checkbox" value="remember-me" true-value=true
-  false-value=false v-model="rememberMe"> Remember me
+                  false-value=false v-model="rememberMe"> Lembre de mim
               </label>
             </div>
             <button class="btn btn-lg btn-primary btn-block" type="submit">Entrar</button>

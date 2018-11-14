@@ -15,7 +15,7 @@
           Pasta</button>
         <div class="custom-file">
           <input type="file" v-on:change="handleUpload" style="display: none" id="customFile">
-          <label class="btn btn-warning btn-lg" for="customFile"><i class="fas fa-upload mr-2"></i>Upload</label>
+          <label class="btn btn-warning btn-lg" for="customFile"><i class="fas fa-upload mr-2"></i>Enviar</label>
         </div>
 
       </div>

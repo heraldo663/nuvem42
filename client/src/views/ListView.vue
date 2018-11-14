@@ -14,7 +14,7 @@
     <tbody>
       <tr v-for="(bucket) in buckets" :key="bucket.id">
         <td>
-          <a href="#" @click.prevent="handleClickOnDirs(bucket.id)"> <i class="fas fa-folder fa-lg"></i>
+          <a href="#" @click.prevent="handleClickOnDirs(bucket.id)"> <i class="fas fa-folder fa-lg text-primary"></i>
             {{bucket.bucket}}</a>
         </td>
         <td>
@@ -93,3 +93,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+a {
+  color: #222;
+}
+</style>

@@ -22,7 +22,10 @@ export default {
 </script>
 
 <style lang="scss">
-@import "./assets/css/bootstrap.min.css";
+$theme-colors: (
+  "primary": #00ff00
+);
+@import "../node_modules/bootstrap/scss/bootstrap";
 .content {
   min-height: calc(100vh - 160px);
 }

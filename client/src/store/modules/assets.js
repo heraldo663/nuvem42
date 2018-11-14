@@ -5,7 +5,8 @@ export default {
   state: {
     assets: [],
     progress: 0,
-    isUploading: false
+    isUploading: false,
+    req: {}
   },
   mutations: {
     setAssets(state, assets) {
@@ -19,6 +20,9 @@ export default {
     },
     setProgress(state, val) {
       state.progress = val;
+    },
+    setReq(state, req) {
+      state.req = req;
     }
   },
   getters: {
@@ -30,6 +34,9 @@ export default {
     },
     isUploading(state) {
       return state.isUploading;
+    },
+    req(state) {
+      return state.req;
     }
   },
 
@@ -44,15 +51,10 @@ export default {
         console.log(error);
       }
     },
-    async downloadFile({ getters }, payload) {
-      let req = new XMLHttpRequest();
-      req.responseType = "blob";
-      req.open("GET", payload.urlLink, true);
-      req.addEventListener("loadstart", xhrHelpers.loadStartFunction, false);
-      req.addEventListener("progress", xhrHelpers.progressFunction, false);
-      req.addEventListener("load", xhrHelpers.transferCompleteFunction, false);
-      req.setRequestHeader("Authorization", getters.authToken);
+    async downloadFile({ getters, commit }, payload) {
+      let req = xhrHelpers.transfer(getters, payload);
       req.send();
+      commit("setReq", req);
       req.onload = () => {
         const file = req.response;
         console.log(file);
@@ -63,6 +65,7 @@ export default {
         document.body.appendChild(link);
         link.click();
         window.URL.revokeObjectURL(url);
+        commit("setReq", {});
       };
     },
     async deleteAssets({ commit, getters }, assetId) {
@@ -101,10 +104,11 @@ export default {
       // xhrObj.setRequestHeader("Content-type", "x-www-form-urlencoded");
       xhrObj.setRequestHeader("Authorization", getters.authToken);
       xhrObj.send(formData);
-
+      commit("setReq", xhrObj);
       xhrObj.onload = () => {
         var jsonResponse = xhrObj.response;
         commit("addAssets", jsonResponse);
+        commit("setReq", {});
       };
     }
   }
