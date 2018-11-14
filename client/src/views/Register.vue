@@ -21,7 +21,7 @@
             </div>
             <div class="form-group">
               <label for="inputPassword" class="sr-only">Senha</label>
-              <input type="password" v-model="password" id="inputPassword" class="form-control" name="password" placeholder="Password" required> 
+              <input type="password" v-model="password" id="inputPassword" class="form-control" name="password" placeholder="Senha" required> 
             </div>
             <button class="btn btn-lg btn-primary btn-block" type="submit">Enviar</button>
             <p class="mt-5 mb-3 text-muted">&copy; 2017-2018</p>

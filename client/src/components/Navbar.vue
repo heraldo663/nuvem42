@@ -12,7 +12,7 @@
           <router-link class="nav-link" v-if="!isAuthenticated" to="/login">Entrar</router-link>
         </li>
         <li class="nav-item">
-          <router-link class="nav-link" v-if="!isAuthenticated" to="/register">Registro</router-link>
+          <router-link class="nav-link" v-if="!isAuthenticated" to="/register">Registrar-se</router-link>
         </li>
         <li class="nav-item">
           <a href="#" @click="logout"  v-if="isAuthenticated" class="nav-link">Sair</a>

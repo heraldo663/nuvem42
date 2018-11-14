@@ -14,7 +14,7 @@
             </div>
             <div class="form-group">
               <label for="inputPassword" class="sr-only">Senha</label>
-              <input type="password" id="inputPassword" v-model.trim.lazy="password" class="form-control" placeholder="Password" required> 
+              <input type="password" id="inputPassword" v-model.trim.lazy="password" class="form-control" placeholder="Senha" required> 
             </div>
             <div class="checkbox mb-3">
               <label>
