@@ -8,6 +8,7 @@
   </div>
   <div class="col-md-1">
     <a href="#" class="delete" @click.prevent="handleStopDownload"><i class="fas fa-window-close text-danger fa-2x"></i></a>
+    {{ speed }}
   </div>
 
 </div>
@@ -18,6 +19,9 @@ export default {
   computed: {
     progress() {
       return this.$store.getters.progress;
+    },
+    speed() {
+      return this.$store.getters.speed;
     }
   },
   methods: {

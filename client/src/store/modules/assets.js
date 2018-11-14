@@ -6,7 +6,8 @@ export default {
     assets: [],
     progress: 0,
     isUploading: false,
-    req: {}
+    req: {},
+    speed: ""
   },
   mutations: {
     setAssets(state, assets) {
@@ -23,6 +24,9 @@ export default {
     },
     setReq(state, req) {
       state.req = req;
+    },
+    setSpeed(state, speed) {
+      state.speed = speed;
     }
   },
   getters: {
@@ -37,6 +41,9 @@ export default {
     },
     req(state) {
       return state.req;
+    },
+    speed(state) {
+      return state.speed;
     }
   },
 
