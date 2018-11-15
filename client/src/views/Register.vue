@@ -10,10 +10,10 @@
             Usuário registrando com sucesso
           </div>
           <form class="form-signin" @submit.prevent="onSubmit">
-            <h1 class="h3 mb-3 font-weight-normal">Registro</h1>
+            <h1 class="h3 mb-3 font-weight-normal">Registrar-se</h1>
             <div class="form-group">
               <label for="inputEmail" class="sr-only">Email</label>
-              <input type="email" id="inputEmail" v-model="email" class="form-control" name="email" placeholder="Email" required autofocus>
+              <input type="email" id="inputEmail" v-model="email" class="form-control" name="email" placeholder="E-mail" required autofocus>
             </div>
             <div class="form-group">
               <label for="inputEmail" class="sr-only">Nome</label>
@@ -23,8 +23,7 @@
               <label for="inputPassword" class="sr-only">Senha</label>
               <input type="password" v-model="password" id="inputPassword" class="form-control" name="password" placeholder="Senha" required> 
             </div>
-            <button class="btn btn-lg btn-primary btn-block" type="submit">Enviar</button>
-            <p class="mt-5 mb-3 text-muted">&copy; 2017-2018</p>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Registrar-se</button>
           </form>
         </div>
       </div>
