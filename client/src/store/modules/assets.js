@@ -76,11 +76,15 @@ export default {
       };
     },
     async deleteAssets({ commit, getters }, assetId) {
-      window.axios.delete(`/api/bucket/${this.rootBucketId}/assets/${assetId}`);
-      const filteredAssets = getters.assets.filter(asset => {
-        return asset.id !== assetId;
-      });
-      commit("setAssets", filteredAssets);
+      if (confirm("Tem certeza que deseja deletar?")) {
+        window.axios.delete(
+          `/api/bucket/${this.rootBucketId}/assets/${assetId}`
+        );
+        const filteredAssets = getters.assets.filter(asset => {
+          return asset.id !== assetId;
+        });
+        commit("setAssets", filteredAssets);
+      }
     },
     async uploadFile({ commit, getters }, e) {
       let file = e.target.files[0];
