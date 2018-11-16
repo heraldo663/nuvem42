@@ -1,3 +1,5 @@
+import router from "../../router";
+
 export default {
   state: {
     isRoot: true,
@@ -41,15 +43,23 @@ export default {
   },
   actions: {
     async getAllRootbuckets({ commit }) {
-      const res = await window.axios.get("/api/bucket");
-      commit("setRootBucketId", res.data.rootId);
-      commit("setBuckets", res.data.buckets);
+      try {
+        const res = await window.axios.get("/api/bucket");
+        commit("setRootBucketId", res.data.rootId);
+        commit("setBuckets", res.data.buckets);
+      } catch (error) {
+        router.push("/login");
+      }
     },
     async getAllBuckets({ commit }, bucketId) {
-      const res = await window.axios.get(`/api/bucket/${bucketId}`);
-      commit("setBuckets", res.data);
-      commit("setRootBucketId", bucketId);
-      commit("setIsRoot", false);
+      try {
+        const res = await window.axios.get(`/api/bucket/${bucketId}`);
+        commit("setBuckets", res.data);
+        commit("setRootBucketId", bucketId);
+        commit("setIsRoot", false);
+      } catch (err) {
+        router.push("/login");
+      }
     },
     addToPrevState({ commit, getters }) {
       commit("addToPrevState", {
@@ -85,7 +95,10 @@ export default {
     },
     async deleteDirs({ commit, getters }, bucketId) {
       try {
-        const res = await window.axios.delete(`/api/bucket/${bucketId}`);
+        let res;
+        if (confirm("Tem certeza que deseja deletar?")) {
+          res = await window.axios.delete(`/api/bucket/${bucketId}`);
+        }
         if (res.data.success) {
           let filteredBuckets = getters.buckets.filter(bucket => {
             if (bucket.id != bucketId) {

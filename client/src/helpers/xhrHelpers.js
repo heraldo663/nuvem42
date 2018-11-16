@@ -5,7 +5,6 @@ export default {
   },
   progressFunction(e) {
     if (e.lengthComputable) {
-      console.log(e);
       let percentComplete = (e.loaded / e.total) * 100;
       store.commit("setProgress", percentComplete);
     } else {
