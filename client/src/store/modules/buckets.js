@@ -98,16 +98,16 @@ export default {
         let res;
         if (confirm("Tem certeza que deseja deletar?")) {
           res = await window.axios.delete(`/api/bucket/${bucketId}`);
-        }
-        if (res.data.success) {
-          let filteredBuckets = getters.buckets.filter(bucket => {
-            if (bucket.id != bucketId) {
-              return true;
-            } else {
-              return false;
-            }
-          });
-          commit("setBuckets", filteredBuckets);
+          if (res.data.success) {
+            let filteredBuckets = getters.buckets.filter(bucket => {
+              if (bucket.id != bucketId) {
+                return true;
+              } else {
+                return false;
+              }
+            });
+            commit("setBuckets", filteredBuckets);
+          }
         }
       } catch (error) {
         console.log(error);
