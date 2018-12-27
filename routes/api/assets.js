@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router({ mergeParams: true });
-const passport = require("passport");
 const {
   getAssets,
   createAssets,
@@ -11,17 +10,8 @@ const storage = require("../../services/multer");
 
 const upload = multer({ storage });
 
-router.get("/", passport.authenticate("jwt", { session: false }), getAssets);
-router.post(
-  "/",
-  passport.authenticate("jwt", { session: false }),
-  upload.single("file"),
-  createAssets
-);
-router.delete(
-  "/:id",
-  passport.authenticate("jwt", { session: false }),
-  deleteAssets
-);
+router.get("/", getAssets);
+router.post("/", upload.single("file"), createAssets);
+router.delete("/:id", deleteAssets);
 
 module.exports = router;

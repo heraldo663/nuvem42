@@ -1,5 +1,5 @@
 const { User } = require("../models");
-const bcrypt = require("bcryptjs");
+var bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const _ = require("lodash");
 const { Bucket } = require("../models");
@@ -26,52 +26,43 @@ module.exports = {
           password: req.body.password
         };
 
-        bcrypt.genSalt(10, (err, salt) => {
-          bcrypt.hash(newUser.password, salt, async (err, hash) => {
-            if (err) throw err;
-            newUser.password = hash;
-            const user = await User.create(newUser);
-            try {
-              const userWithoutPassword = _.pick(user, [
-                "id",
-                "username",
-                "email"
-              ]);
-              const newRoot = {
-                bucket: "root",
-                rootBucketId: null,
-                userId: userWithoutPassword.id
-              };
-              const root = await Bucket.create(newRoot);
+        const user = await User.create(newUser);
 
-              const newMusic = {
-                bucket: "musica",
-                rootBucketId: root.id,
-                userId: userWithoutPassword.id
-              };
-              const newVideos = {
-                bucket: "videos",
-                rootBucketId: root.id,
-                userId: userWithoutPassword.id
-              };
-              const newDocuments = {
-                bucket: "documentos",
-                rootBucketId: root.id,
-                userId: userWithoutPassword.id
-              };
+        try {
+          const userWithoutPassword = _.pick(user, ["id", "username", "email"]);
+          const newRoot = {
+            bucket: "root",
+            rootBucketId: null,
+            userId: userWithoutPassword.id
+          };
+          const root = await Bucket.create(newRoot);
 
-              await Bucket.create(newMusic);
-              await Bucket.create(newVideos);
-              await Bucket.create(newDocuments);
+          const newMusic = {
+            bucket: "musica",
+            rootBucketId: root.id,
+            userId: userWithoutPassword.id
+          };
+          const newVideos = {
+            bucket: "videos",
+            rootBucketId: root.id,
+            userId: userWithoutPassword.id
+          };
+          const newDocuments = {
+            bucket: "documentos",
+            rootBucketId: root.id,
+            userId: userWithoutPassword.id
+          };
 
-              res.send({
-                user: userWithoutPassword
-              });
-            } catch (error) {
-              console.log(error);
-            }
+          await Bucket.create(newMusic);
+          await Bucket.create(newVideos);
+          await Bucket.create(newDocuments);
+
+          res.send({
+            user: userWithoutPassword
           });
-        });
+        } catch (error) {
+          console.log(error);
+        }
       }
     } catch (error) {
       res.status(500).send({ error, success: false });
@@ -85,7 +76,7 @@ module.exports = {
 
       const user = await User.findOne({ where: { email } });
 
-      const isMatch = await bcrypt.compare(password, user.password);
+      const isMatch = bcrypt.compare(password, user.password);
       if (isMatch) {
         // User Matched
         const payload = { id: user.id, username: user.username }; // Create JWT Payload

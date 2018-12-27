@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const passport = require("passport");
 const {
   getBuckets,
   createBucket,
@@ -9,22 +8,14 @@ const {
   getBucket
 } = require("../../controllers/bucketController");
 
-router.get("/", passport.authenticate("jwt", { session: false }), getBuckets);
-router.get("/:id", passport.authenticate("jwt", { session: false }), getBucket);
-router.post(
-  "/",
-  passport.authenticate("jwt", { session: false }),
-  createBucket
-);
+router.get("/", getBuckets);
+router.get("/:id", getBucket);
+router.post("/", createBucket);
 router.patch(
   "/:id",
-  passport.authenticate("jwt", { session: false }),
+
   patchBucket
 );
-router.delete(
-  "/:id",
-  passport.authenticate("jwt", { session: false }),
-  deleteBucket
-);
+router.delete("/:id", deleteBucket);
 
 module.exports = router;
