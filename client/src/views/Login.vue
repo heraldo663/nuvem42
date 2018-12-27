@@ -3,26 +3,62 @@
     <div class="container">
       <div class="row">
         <div class="col-md-6 offset-md-3">
-          <div class="alert alert-danger" role="alert" v-if="error">
+          <div
+            class="alert alert-danger"
+            role="alert"
+            v-if="error"
+          >
             {{error.error}}
           </div>
-          <form class="form-signin" @submit.prevent="onSubmit">
+          <form
+            class="form-signin"
+            @submit.prevent="onSubmit"
+          >
             <h1 class="h3 mb-3 font-weight-normal">Entrar</h1>
             <div class="form-group">
-              <label for="inputEmail" class="sr-only">Email</label>
-              <input type="email" id="inputEmail" v-model.trim.lazy="email" class="form-control" placeholder="E-mail" required autofocus>
+              <label
+                for="inputEmail"
+                class="sr-only"
+              >Email</label>
+              <input
+                type="email"
+                id="inputEmail"
+                v-model.trim.lazy="email"
+                class="form-control"
+                placeholder="E-mail"
+                required
+                autofocus
+              >
             </div>
             <div class="form-group">
-              <label for="inputPassword" class="sr-only">Senha</label>
-              <input type="password" id="inputPassword" v-model.trim.lazy="password" class="form-control" placeholder="Senha" required> 
+              <label
+                for="inputPassword"
+                class="sr-only"
+              >Senha</label>
+              <input
+                type="password"
+                id="inputPassword"
+                v-model.trim.lazy="password"
+                class="form-control"
+                placeholder="Senha"
+                required
+              >
             </div>
             <div class="checkbox mb-3">
               <label>
-                <input type="checkbox" value="remember-me" true-value=true
-                  false-value=false v-model="rememberMe"> Lembre-se
+                <input
+                  type="checkbox"
+                  value="remember-me"
+                  true-value=true
+                  false-value=false
+                  v-model="rememberMe"
+                > Lembre-se
               </label>
             </div>
-            <button class="btn btn-lg btn-primary btn-block" type="submit">Acessar</button>
+            <button
+              class="btn btn-lg btn-primary btn-block"
+              type="submit"
+            >Acessar</button>
           </form>
         </div>
       </div>

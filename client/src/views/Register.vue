@@ -3,27 +3,76 @@
     <div class="container">
       <div class="row">
         <div class="col-md-6 offset-md-3">
-           <div class="alert alert-danger" role="alert" v-if="error">
+          <div
+            class="alert alert-danger"
+            role="alert"
+            v-if="error"
+          >
             {{error}}
           </div>
-           <div class="alert alert-success" role="alert" v-if="success">
+          <div
+            class="alert alert-success"
+            role="alert"
+            v-if="success"
+          >
             Usuário registrando com sucesso
           </div>
-          <form class="form-signin" @submit.prevent="onSubmit">
+          <form
+            class="form-signin"
+            @submit.prevent="onSubmit"
+          >
             <h1 class="h3 mb-3 font-weight-normal">Registrar-se</h1>
             <div class="form-group">
-              <label for="inputEmail" class="sr-only">Email</label>
-              <input type="email" id="inputEmail" v-model="email" class="form-control" name="email" placeholder="E-mail" required autofocus>
+              <label
+                for="inputEmail"
+                class="sr-only"
+              >Email</label>
+              <input
+                type="email"
+                id="inputEmail"
+                v-model="email"
+                class="form-control"
+                name="email"
+                placeholder="E-mail"
+                required
+                autofocus
+              >
             </div>
             <div class="form-group">
-              <label for="inputEmail" class="sr-only">Nome</label>
-              <input type="text" id="name" v-model="name" class="form-control" name="name" placeholder="Nome" required autofocus>
+              <label
+                for="inputEmail"
+                class="sr-only"
+              >Nome</label>
+              <input
+                type="text"
+                id="name"
+                v-model="name"
+                class="form-control"
+                name="name"
+                placeholder="Nome"
+                required
+                autofocus
+              >
             </div>
             <div class="form-group">
-              <label for="inputPassword" class="sr-only">Senha</label>
-              <input type="password" v-model="password" id="inputPassword" class="form-control" name="password" placeholder="Senha" required> 
+              <label
+                for="inputPassword"
+                class="sr-only"
+              >Senha</label>
+              <input
+                type="password"
+                v-model="password"
+                id="inputPassword"
+                class="form-control"
+                name="password"
+                placeholder="Senha"
+                required
+              >
             </div>
-            <button class="btn btn-lg btn-primary btn-block" type="submit">Registrar-se</button>
+            <button
+              class="btn btn-lg btn-primary btn-block"
+              type="submit"
+            >Registrar-se</button>
           </form>
         </div>
       </div>

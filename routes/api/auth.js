@@ -6,7 +6,7 @@ const passport = require("passport");
 /* GET home page. */
 router.post(
   "/register",
-  passport.authenticate("jwt", { session: false }),
+  // passport.authenticate("jwt", { session: false }),
   register
 );
 router.post("/login", login);
