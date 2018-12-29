@@ -4,8 +4,8 @@ const bcrypt = require("bcryptjs");
 module.exports = async () => {
   const adminUser = {
     username: "nuvem42",
-    email: "numvem42@admin.com",
-    password: "fileserver42"
+    email: process.env.ADMIN_EMAIL,
+    password: process.env.ADMIN_PASSWORD
   };
 
   const admin = await User.findOne({ where: { email: adminUser.email } });
