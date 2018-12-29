@@ -61,3 +61,5 @@ typings/
 .next
 
 media
+
+seeders/adminSeed.js

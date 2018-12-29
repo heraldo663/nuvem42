@@ -9,12 +9,6 @@ const { Bucket } = require("../models");
 module.exports = {
   async register(req, res) {
     try {
-      if (req.body.password.length <= 4) {
-        res.status(400).send({
-          success: false,
-          error: "password need to have more then 4 characaters"
-        });
-      }
       const user = await User.findOne({ where: { email: req.body.email } });
       if (user) {
         let error = "Email already exists";
@@ -23,7 +17,7 @@ module.exports = {
         const newUser = {
           username: req.body.username,
           email: req.body.email,
-          password: req.body.password
+          password: req.body.password || ""
         };
 
         const user = await User.create(newUser);
@@ -73,11 +67,18 @@ module.exports = {
     try {
       // Find user by email
       const { email, password } = req.body;
-
       const user = await User.findOne({ where: { email } });
 
       const isMatch = bcrypt.compare(password, user.password);
       if (isMatch) {
+        if (password === "") {
+          const userWithoutPassword = _.pick(user, ["id", "username", "email"]);
+          return res.status(307).json({
+            message: "Update your password",
+            userWithoutPassword,
+            url: `${process.env.APP_URL}api/auth/update`
+          });
+        }
         // User Matched
         const payload = { id: user.id, username: user.username }; // Create JWT Payload
         // Sign Token
@@ -106,6 +107,24 @@ module.exports = {
       }
     } catch (error) {
       res.status(400).send({ error: "email not found", success: false });
+    }
+  },
+
+  async update(req, res) {
+    try {
+      let userModel = await Bucket.findOne({ id: req.params.id });
+      const updatedUser = {
+        id: req.body.id,
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password
+      };
+      if (updatedUser) {
+        await userModel.update({ updatedUser });
+        return res.json({ success: true, message: "user updated!" });
+      }
+    } catch (error) {
+      res.status(500).json({ error, success: false });
     }
   }
 };
