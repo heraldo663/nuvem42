@@ -1,26 +1,36 @@
 <template>
-<nav class="navbar navbar-expand-lg navbar-dark mb-5 bg-primary">
-  <div class="container">
-    <router-link class="navbar-brand" to="/" >Nuvem42</router-link> 
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
-      <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-        <li class="nav-item">
-          <router-link class="nav-link" v-if="!isAuthenticated" to="/login">Entrar</router-link>
-        </li>
-        <li class="nav-item">
-          <router-link class="nav-link" v-if="!isAuthenticated" to="/register">Registrar-se</router-link>
-        </li>
-        <li class="nav-item">
-          <a href="#" @click="logout"  v-if="isAuthenticated" class="nav-link">Sair</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
+  <v-toolbar
+    app
+    color="primary"
+  >
+    <v-toolbar-title class="headline">
+      <span class="white--text">Nuvem42</span>
+    </v-toolbar-title>
+    <v-spacer></v-spacer>
+    <v-toolbar-items
+      hidden-sm-and-down
+      class="hidden-sm-and-down"
+    >
+      <v-btn
+        flat
+        to="/login"
+        dark
+        v-if="!isAuthenticated"
+      >Login</v-btn>
+      <v-btn
+        flat
+        dark
+        v-if="!isAuthenticated"
+        to="/register"
+      >Registrar</v-btn>
+      <v-btn
+        flat
+        dark
+        @click="logout"
+        v-if="isAuthenticated"
+      > Sair</v-btn>
+    </v-toolbar-items>
+  </v-toolbar>
 </template>
 
 <script>

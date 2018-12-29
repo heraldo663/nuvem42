@@ -1,5 +1,76 @@
 <template>
-  <div class="text-center mt4">
+  <v-container>
+    <v-layout
+      align-center
+      justify-center
+      row
+      fill-height
+    >
+
+      <v-flex
+        md6
+        sm8
+        xs11
+      >
+        <v-card class="elevation-12">
+          <v-alert
+            :value="!!error"
+            type="warning"
+          >
+            {{error.error}}
+          </v-alert>
+
+          <v-toolbar
+            dark
+            color="primary"
+          >
+            <v-toolbar-title>Entrar</v-toolbar-title>
+            <v-spacer></v-spacer>
+
+          </v-toolbar>
+          <v-card-text>
+            <v-form>
+              <v-text-field
+                prepend-icon="person"
+                name="login"
+                label="E-mail"
+                type="text"
+                v-model="email"
+              ></v-text-field>
+              <v-text-field
+                id="password"
+                prepend-icon="lock"
+                name="password"
+                label="Senha"
+                type="password"
+                v-model="password"
+              ></v-text-field>
+              <v-checkbox
+                :label="`Lembre-se`"
+                color="primary"
+                v-model="checkbox"
+                true-value=true
+                false-value=false
+              ></v-checkbox>
+            </v-form>
+          </v-card-text>
+          <v-card-actions>
+            <v-layout
+              align-center
+              justify-center
+              row
+            >
+              <v-btn
+                @click="onSubmit"
+                color="primary"
+              >Acessar</v-btn>
+            </v-layout>
+          </v-card-actions>
+        </v-card>
+      </v-flex>
+    </v-layout>
+  </v-container>
+  <!-- <div class="text-center mt4">
     <div class="container">
       <div class="row">
         <div class="col-md-6 offset-md-3">
@@ -63,7 +134,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
