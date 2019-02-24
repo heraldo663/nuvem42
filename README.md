@@ -1,4 +1,4 @@
-# Fileserver
+# Nuvem42
 
 to use this you need to create a config.json inside the folder client with the api url:
 ex:

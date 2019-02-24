@@ -1,20 +1,19 @@
 {
-  "name": "fileserver",
-  "version": "0.0.0",
+  "name": "Nuvem42",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
-    "dev:server": "NODE_ENV=development nodemon ./bin/www",
+    "start": "node ./src/bin/www",
+    "dev:server": "cross-env NODE_ENV=development nodemon ./src/bin/www",
     "dev:client": "npm run serve --prefix client",
     "install:client": "npm install --prefix client",
     "build:client": "npm run build --prefix client",
-    "test": "jest --detectOpenHandles",
-    "test:watch": "jest --watchAll --verbose --detectOpenHandles",
-    "test:coverage": "jest --coverage"
+    "pretest": "cross-env NODE_ENV=test sequelize db:migrate",
+    "test": "cross-env NODE_ENV=test jest",
+    "posttest": "cross-env NODE_ENV=test sequelize db:migrate:undo:all"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "cookie-parser": "~1.4.3",
     "cors": "^2.8.4",
     "debug": "~2.6.9",
     "dotenv": "^6.0.0",
@@ -32,10 +31,16 @@
     "sequelize-cli": "^4.1.1"
   },
   "devDependencies": {
+    "cross-env": "^5.2.0",
+    "eslint": "^5.14.1",
+    "eslint-plugin-prettier": "^3.0.1",
+    "factory-girl": "^5.0.4",
     "faker": "^4.1.0",
     "jest": "^23.6.0",
     "jest-environment-node": "^23.4.0",
     "nodemon": "^1.18.4",
+    "prettier": "^1.16.4",
+    "sqlite3": "^4.0.6",
     "supertest": "^3.3.0"
   }
 }

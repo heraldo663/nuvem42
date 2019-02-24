@@ -1,8 +1,8 @@
 module.exports = {
   apps: [
     {
-      name: "fileserver",
-      script: "./bin/www",
+      name: "Nuvem42",
+      script: "./src/bin/www",
       watch: true,
       instances: 2
     }

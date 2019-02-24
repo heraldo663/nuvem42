@@ -1,4 +1,4 @@
-FROM node:10.8
+FROM node:10.15.1
 
 ENV INSTALL_PATH /usr/src/fileserver
 
