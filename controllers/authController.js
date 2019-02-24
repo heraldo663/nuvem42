@@ -17,7 +17,7 @@ module.exports = {
         const newUser = {
           username: req.body.username,
           email: req.body.email,
-          password: req.body.password || ""
+          password: req.body.password || "1"
         };
 
         const user = await User.create(newUser);
@@ -51,7 +51,7 @@ module.exports = {
           await Bucket.create(newVideos);
           await Bucket.create(newDocuments);
 
-          res.send({
+          res.status(201).send({
             user: userWithoutPassword
           });
         } catch (error) {
@@ -68,12 +68,11 @@ module.exports = {
       // Find user by email
       const { email, password } = req.body;
       const user = await User.findOne({ where: { email } });
-
-      const isMatch = bcrypt.compare(password, user.password);
+      const isMatch = await bcrypt.compare(password, user.password);
       if (isMatch) {
-        if (password === "") {
+        if (password === "1") {
           const userWithoutPassword = _.pick(user, ["id", "username", "email"]);
-          return res.status(307).json({
+          return res.status(200).json({
             message: "Update your password",
             userWithoutPassword,
             url: `${process.env.APP_URL}api/auth/update`

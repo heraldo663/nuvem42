@@ -28,13 +28,16 @@ export default {
           email: authData.email,
           password: authData.password
         });
-        const { token, user } = res.data;
-        commit("setUsername", user.username);
-        window.axios.defaults.headers.common["Authorization"] = token;
-        if (authData.rememberMe) {
-          localStorage.setItem("authToken", token);
+        console.log(res);
+        if (res.data.token) {
+          const { token, user } = res.data;
+          commit("setUsername", user.username);
+          window.axios.defaults.headers.common["Authorization"] = token;
+          if (authData.rememberMe) {
+            localStorage.setItem("authToken", token);
+          }
+          commit("setAuthUser", { authToken: token });
         }
-        commit("setAuthUser", { authToken: token });
       } catch (error) {
         commit("setError", {
           error: error.response.data.error

@@ -24,19 +24,12 @@
             dark
             color="primary"
           >
-            <v-toolbar-title>Entrar</v-toolbar-title>
+            <v-toolbar-title>Atualize sua senha</v-toolbar-title>
             <v-spacer></v-spacer>
 
           </v-toolbar>
           <v-card-text>
             <v-form>
-              <v-text-field
-                prepend-icon="person"
-                name="login"
-                label="E-mail"
-                type="text"
-                v-model.trim.lazy="email"
-              ></v-text-field>
               <v-text-field
                 id="password"
                 prepend-icon="lock"
@@ -61,7 +54,7 @@
               <v-btn
                 @click="onSubmit"
                 color="primary"
-              >Acessar</v-btn>
+              >Enviar</v-btn>
             </v-layout>
           </v-card-actions>
         </v-card>
@@ -69,35 +62,3 @@
     </v-layout>
   </v-container>
 </template>
-
-<script>
-// import mapGetters from "vuex";
-export default {
-  data() {
-    return {
-      email: "",
-      password: "",
-      rememberMe: false
-    };
-  },
-  name: "login",
-  computed: {
-    error() {
-      return this.$store.getters.error;
-    }
-  },
-  methods: {
-    async onSubmit() {
-      if (this.password == "") {
-        this.password = "1";
-      }
-      await this.$store.dispatch("login", {
-        email: this.email,
-        password: this.password,
-        rememberMe: this.rememberMe
-      });
-      this.$router.push("/");
-    }
-  }
-};
-</script>

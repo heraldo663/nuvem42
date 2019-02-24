@@ -12,6 +12,7 @@ module.exports = {
           rootBucketId: null
         }
       });
+      
       const buckets = await Bucket.findAll({
         where: {
           userId: req.user.id,

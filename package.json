@@ -8,8 +8,8 @@
     "dev:client": "npm run serve --prefix client",
     "install:client": "npm install --prefix client",
     "build:client": "npm run build --prefix client",
-    "test": "jest --detectOpenHandles",
-    "test:watch": "jest --watchAll --verbose --detectOpenHandles",
+    "test": "jest --detectOpenHandles --runInBand",
+    "test:watch": "jest --watchAll --verbose --detectOpenHandles --forceExit",
     "test:coverage": "jest --coverage"
   },
   "dependencies": {

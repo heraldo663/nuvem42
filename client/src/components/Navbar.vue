@@ -16,13 +16,7 @@
         to="/login"
         dark
         v-if="!isAuthenticated"
-      >Login</v-btn>
-      <v-btn
-        flat
-        dark
-        v-if="!isAuthenticated"
-        to="/register"
-      >Registrar</v-btn>
+      >Entrar</v-btn>
       <v-btn
         flat
         dark

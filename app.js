@@ -19,6 +19,7 @@ const app = express();
 require("./seeders/adminSeed")();
 
 app.use(passport.initialize());
+
 require("./services/passport")(passport);
 
 app.use(logger("dev"));

@@ -1,33 +1,30 @@
-const request = require("supertest");
+const supertest = require("supertest");
 const { Assets } = require("../../models");
 const { User } = require("../../models");
+const app = require("../../app");
+
+const request = supertest(app);
 
 let token;
 let bucketId;
 
 beforeAll(async () => {
-  server = require("../../app");
-
   const tester = {
     username: "Testert",
     email: "testert@test.com",
     password: "123456"
   };
 
-  await request(server)
-    .post("/api/auth/register")
-    .send(tester);
+  await request.post("/api/auth/register").send(tester);
   delete tester.username;
-  const res = await request(server)
-    .post("/api/auth/login")
-    .send(tester);
+  const res = await request.post("/api/auth/login").send(tester);
 
   token = res.body.token;
 
   const newBucket = {
     bucket: "test"
   };
-  const resbucket = await request(server)
+  const resbucket = await request
     .post("/api/bucket")
     .send(newBucket)
     .set("Authorization", token);
@@ -42,7 +39,7 @@ afterAll(() => {
 
 describe("GET /api/bucket/:bucket_id/assets", () => {
   it("should get an empty bucket", async () => {
-    const res = await request(server)
+    const res = await request
       .get(`/api/bucket/${bucketId}/assets`)
       .set("Authorization", token);
 
@@ -53,7 +50,7 @@ describe("GET /api/bucket/:bucket_id/assets", () => {
 
 describe("POST /api/bucket/:bucket_id/assets", () => {
   it("should save an asset", async () => {
-    const res = await request(server)
+    const res = await request
       .post(`/api/bucket/${bucketId}/assets`)
       .attach("file", "tests/fixtures/img1.jpg")
       .set("Authorization", token)
@@ -68,14 +65,14 @@ describe("POST /api/bucket/:bucket_id/assets", () => {
 
 describe("DELETE /api/bucket/:bucket_id/assets", () => {
   it("should delete an asset", async () => {
-    const asset = await request(server)
+    const asset = await request
       .post(`/api/bucket/${bucketId}/assets`)
       .attach("file", "tests/fixtures/img1.jpg")
       .set("Authorization", token)
       .set("Content-Type", "application/x-www-form-urlencoded");
 
     console.log(asset.body);
-    const res = await request(server)
+    const res = await request
       .delete(`/api/bucket/${bucketId}/assets/${asset.body.id}`)
       .set("Authorization", token)
       .set("Content-Type", "application/json");
