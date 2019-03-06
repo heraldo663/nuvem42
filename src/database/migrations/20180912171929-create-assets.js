@@ -9,28 +9,48 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       name: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       filename: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       encoding: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       mimetype: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       size: {
+        allowNull: false,
         type: Sequelize.INTEGER
       },
       url: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       bucketId: {
+        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: "Buckets",
           key: "id"
+        }
+      },
+      userId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Users",
+          key: "id"
+        },
+        validate: {
+          notEmpty: {
+            msg: "Field Required"
+          }
         }
       },
       createdAt: {

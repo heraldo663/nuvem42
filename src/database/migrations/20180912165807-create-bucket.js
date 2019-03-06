@@ -9,13 +9,25 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       bucket: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: "Field Required"
+          }
+        }
       },
       userId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
           model: "Users",
           key: "id"
+        },
+        validate: {
+          notEmpty: {
+            msg: "Field Required"
+          }
         }
       },
       rootBucketId: {
@@ -23,6 +35,11 @@ module.exports = {
         references: {
           model: "Buckets",
           key: "id"
+        },
+        validate: {
+          notEmpty: {
+            msg: "Field Required"
+          }
         }
       },
       createdAt: {

@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
       mimetype: DataTypes.STRING,
       encoding: DataTypes.STRING,
       size: DataTypes.INTEGER,
+      userId: DataTypes.INTEGER,
       url: DataTypes.STRING
     },
     {}
@@ -16,6 +17,11 @@ module.exports = (sequelize, DataTypes) => {
     // associations can be defined here
     Assets.belongsTo(models.Bucket, {
       foreignKey: "bucketId",
+      onDelete: "CASCADE"
+    });
+
+    Assets.belongsTo(models.User, {
+      foreignKey: "userId",
       onDelete: "CASCADE"
     });
   };

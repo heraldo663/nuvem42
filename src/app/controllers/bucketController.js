@@ -1,8 +1,21 @@
 const { Bucket } = require("../models");
+const express = require("express");
 
 // @TODO: implemente validation
 
-module.exports = {
+class BucketsController {
+  constructor() {
+    this.router = express.Router();
+    this.routes();
+  }
+  routes() {
+    this.router.get("/", this.getBuckets);
+    this.router.get("/:id", this.getBucket);
+    this.router.post("/", this.createBucket);
+    this.router.patch("/:id", this.patchBucket);
+    this.router.delete("/:id", this.deleteBucket);
+  }
+
   async getBuckets(req, res) {
     try {
       const root = await Bucket.findOne({
@@ -26,7 +39,8 @@ module.exports = {
     } catch (error) {
       res.status(500).json({ error, success: false });
     }
-  },
+  }
+
   async getBucket(req, res) {
     try {
       const buckets = await Bucket.findAll({
@@ -40,7 +54,8 @@ module.exports = {
     } catch (error) {
       res.status(500).json({ error, success: false });
     }
-  },
+  }
+
   async createBucket(req, res) {
     try {
       const root = await Bucket.findOne({
@@ -66,7 +81,8 @@ module.exports = {
     } catch (error) {
       res.status(500).json({ error, success: false });
     }
-  },
+  }
+
   async patchBucket(req, res) {
     try {
       let bucketModel = await Bucket.findOne({ id: req.params.id });
@@ -80,7 +96,7 @@ module.exports = {
     } catch (error) {
       res.status(500).json({ error, success: false });
     }
-  },
+  }
 
   async deleteBucket(req, res) {
     try {
@@ -91,4 +107,6 @@ module.exports = {
       res.status(500).json({ error, success: false });
     }
   }
-};
+}
+
+module.exports = new BucketsController().router;

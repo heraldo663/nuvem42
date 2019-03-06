@@ -1,10 +1,8 @@
 const request = require("supertest");
 const faker = require("faker");
-const { User } = require("./../../models");
+const { User } = require("../../src/app/models");
+const server = require("../../src/app");
 
-beforeEach(() => {
-  server = require("../../app");
-});
 afterEach(async () => {
   User.destroy({
     where: {}

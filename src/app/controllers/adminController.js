@@ -1,9 +1,20 @@
-const { User } = require("../models");
+const express = require("express");
 const _ = require("lodash");
+const { User } = require("../models");
 
 // @TODO: implemente validation
 
-module.exports = {
+class AdminController {
+  constructor() {
+    this.router = express.Router();
+    this.routes();
+  }
+  routes() {
+    this.router.get("/", this.getUsers);
+    this.router.patch("/:id", this.patchUser);
+    this.router.delete("/:id", this.deleteUser);
+  }
+
   async getUsers(req, res) {
     try {
       let users = await User.findAll({});
@@ -12,7 +23,7 @@ module.exports = {
     } catch (error) {
       res.status(500).json({ error, success: false });
     }
-  },
+  }
 
   async patchUser(req, res) {
     try {
@@ -27,7 +38,7 @@ module.exports = {
     } catch (error) {
       res.status(500).json({ error, success: false });
     }
-  },
+  }
 
   async deleteUser(req, res) {
     try {
@@ -38,4 +49,6 @@ module.exports = {
       res.status(500).json({ error, success: false });
     }
   }
-};
+}
+
+module.exports = new AdminController().router;

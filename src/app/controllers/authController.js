@@ -1,11 +1,21 @@
-const { User, Bucket } = require("../models");
-var bcrypt = require("bcryptjs");
+const express = require("express");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const _ = require("lodash");
+const { User, Bucket } = require("../models");
 
 // @TODO: implemente validation
 
-module.exports = {
+class AuthController {
+  constructor() {
+    this.router = express.Router();
+    this.routes();
+  }
+  routes() {
+    this.router.post("/register", this.register);
+    this.router.post("/login", this.login);
+    this.router.patch("/update", this.update);
+  }
   async register(req, res) {
     try {
       const user = await User.findOne({ where: { email: req.body.email } });
@@ -60,7 +70,7 @@ module.exports = {
     } catch (error) {
       res.status(500).send({ error, success: false });
     }
-  },
+  }
 
   async login(req, res) {
     try {
@@ -83,7 +93,7 @@ module.exports = {
         // Sign Token
         jwt.sign(
           payload,
-          process.env.SECRET,
+          process.env.APP_SECRET,
           { expiresIn: 3600 * 24 },
           (err, token) => {
             const userWithoutPassword = _.pick(user, [
@@ -107,7 +117,7 @@ module.exports = {
     } catch (error) {
       res.status(400).send({ error: "email not found", success: false });
     }
-  },
+  }
 
   async update(req, res) {
     try {
@@ -126,4 +136,6 @@ module.exports = {
       res.status(500).json({ error, success: false });
     }
   }
-};
+}
+
+module.exports = new AuthController().router;
