@@ -32,6 +32,14 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
+
+      flagColor: {
+        type: Sequelize.STRING,
+        validate: {
+          is: /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i
+        }
+      },
+
       bucketId: {
         allowNull: false,
         type: Sequelize.INTEGER,

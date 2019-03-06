@@ -7,6 +7,7 @@ const helmet = require("helmet");
 const cors = require("cors");
 
 const router = require("./routes");
+const asyncErrorHandler = require("./app/middleware/asyncErrorHandler");
 
 class App {
   constructor() {
@@ -37,7 +38,7 @@ class App {
   }
 
   routes() {
-    this.app.use("/api", router);
+    this.app.use("/api", asyncErrorHandler(router));
     this.app.get("/*", function(req, res) {
       res.sendFile(path.join(__dirname, "client/dist", "index.html"));
     });

@@ -17,95 +17,75 @@ class BucketsController {
   }
 
   async getBuckets(req, res) {
-    try {
-      const root = await Bucket.findOne({
-        where: {
-          userId: req.user.id,
-          bucket: "root",
-          rootBucketId: null
-        }
-      });
-      const buckets = await Bucket.findAll({
-        where: {
-          userId: req.user.id,
-          rootBucketId: root.id
-        }
-      });
+    const root = await Bucket.findOne({
+      where: {
+        userId: req.user.id,
+        bucket: "root",
+        rootBucketId: null
+      }
+    });
+    const buckets = await Bucket.findAll({
+      where: {
+        userId: req.user.id,
+        rootBucketId: root.id
+      }
+    });
 
-      return res.json({
-        buckets,
-        rootId: root.id
-      });
-    } catch (error) {
-      res.status(500).json({ error, success: false });
-    }
+    return res.json({
+      buckets,
+      rootId: root.id
+    });
   }
 
   async getBucket(req, res) {
-    try {
-      const buckets = await Bucket.findAll({
-        where: {
-          userId: req.user.id,
-          rootBucketId: req.params.id
-        }
-      });
+    const buckets = await Bucket.findAll({
+      where: {
+        userId: req.user.id,
+        rootBucketId: req.params.id
+      }
+    });
 
-      return res.json(buckets);
-    } catch (error) {
-      res.status(500).json({ error, success: false });
-    }
+    return res.json(buckets);
   }
 
   async createBucket(req, res) {
-    try {
-      const root = await Bucket.findOne({
-        where: {
-          userId: req.user.id,
-          bucket: "root",
-          rootBucketId: null
-        }
-      });
-      const newBucket = {
-        bucket: req.body.bucket,
-        rootBucketId: req.body.rootBucketId || root.id,
-        userId: req.user.id
-      };
-
-      if (!newBucket.bucket) {
-        return res
-          .status(400)
-          .send({ success: false, error: "name cannot be blank" });
+    const root = await Bucket.findOne({
+      where: {
+        userId: req.user.id,
+        bucket: "root",
+        rootBucketId: null
       }
-      const bucket = await Bucket.create(newBucket);
-      return res.json(bucket);
-    } catch (error) {
-      res.status(500).json({ error, success: false });
+    });
+    const newBucket = {
+      bucket: req.body.bucket,
+      rootBucketId: req.body.rootBucketId || root.id,
+      userId: req.user.id
+    };
+
+    if (!newBucket.bucket) {
+      return res
+        .status(400)
+        .send({ success: false, error: "name cannot be blank" });
     }
+    const bucket = await Bucket.create(newBucket);
+    return res.json(bucket);
   }
 
   async patchBucket(req, res) {
-    try {
-      let bucketModel = await Bucket.findOne({ id: req.params.id });
-      const { bucket } = req.body;
-      if (bucket) {
-        const updatedBucket = await bucketModel.update({
-          bucket
-        });
-        return res.json(updatedBucket);
-      }
-    } catch (error) {
-      res.status(500).json({ error, success: false });
+    let bucketModel = await Bucket.findOne({ id: req.params.id });
+    const { bucket } = req.body;
+    if (bucket) {
+      const updatedBucket = await bucketModel.update({
+        bucket
+      });
+      return res.json(updatedBucket);
     }
   }
 
   async deleteBucket(req, res) {
-    try {
-      const bucket = await Bucket.findById(req.params.id);
-      bucket.destroy();
-      res.json({ success: true });
-    } catch (error) {
-      res.status(500).json({ error, success: false });
-    }
+    const bucket = await Bucket.findById(req.params.id);
+    bucket.destroy();
+    res.json({ success: true });
   }
 }
 

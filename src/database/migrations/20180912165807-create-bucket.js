@@ -17,6 +17,19 @@ module.exports = {
           }
         }
       },
+
+      isFavorite: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
+
+      flagColor: {
+        type: Sequelize.STRING,
+        validate: {
+          is: /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i
+        }
+      },
       userId: {
         type: Sequelize.INTEGER,
         allowNull: false,

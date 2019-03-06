@@ -120,20 +120,16 @@ class AuthController {
   }
 
   async update(req, res) {
-    try {
-      let userModel = await Bucket.findOne({ id: req.params.id });
-      const updatedUser = {
-        id: req.body.id,
-        username: req.body.username,
-        email: req.body.email,
-        password: req.body.password
-      };
-      if (updatedUser) {
-        await userModel.update({ updatedUser });
-        return res.json({ success: true, message: "user updated!" });
-      }
-    } catch (error) {
-      res.status(500).json({ error, success: false });
+    let userModel = await Bucket.findOne({ id: req.params.id });
+    const updatedUser = {
+      id: req.body.id,
+      username: req.body.username,
+      email: req.body.email,
+      password: req.body.password
+    };
+    if (updatedUser) {
+      await userModel.update({ updatedUser });
+      return res.json({ success: true, message: "user updated!" });
     }
   }
 }
