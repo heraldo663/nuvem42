@@ -63,3 +63,5 @@ typings/
 media
 
 seeders/adminSeed.js
+
+database.sqlite
