@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
       username: DataTypes.STRING,
       email: {
         type: DataTypes.STRING,
+        unique: true,
         allowNull: false,
         validate: {
           isEmail: true
@@ -19,6 +20,10 @@ module.exports = (sequelize, DataTypes) => {
           const hash = bcrypt.hashSync(val, salt);
           this.setDataValue("password", hash);
         }
+      },
+      isSuperUser: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false
       }
     },
     {}

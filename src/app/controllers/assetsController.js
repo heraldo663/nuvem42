@@ -16,13 +16,12 @@ class AssetsController {
 
   routes() {
     const upload = multer(storage);
-
-    this.router.get("/", this.getAssets);
-    this.router.post("/", upload.single("file"), this.createAssets);
-    this.router.delete("/:id", this.deleteAssets);
+    this.router.get("/", this.get);
+    this.router.post("/", upload.single("file"), this.create);
+    this.router.delete("/:id", this.delete);
   }
 
-  async getAssets(req, res) {
+  async get(req, res) {
     const assets = await Assets.findAll({
       where: {
         bucketId: req.params.bucket_id
@@ -31,7 +30,7 @@ class AssetsController {
     return res.send(assets);
   }
 
-  async createAssets(req, res) {
+  async create(req, res) {
     // TODO: refatorar dirname
     let dirName = req.user.username.split(" ");
     dirName = dirName.join("-");
@@ -47,17 +46,14 @@ class AssetsController {
       url: `${process.env.APP_URL}media/${dirName}/${req.file.filename}`
     };
 
-    console.log(newAsset);
-
     const asset = await Assets.create(newAsset);
     return res.send(asset);
   }
 
-  async deleteAssets(req, res) {
+  async delete(req, res) {
     const asset = await Assets.findById(req.params.id);
     let dirName = req.user.username.split(" ");
     dirName = dirName.join("-");
-    console.log(`${baseDir}/${dirName}/${asset.filename}`);
     fs.unlink(`${baseDir}/${dirName}/${asset.filename}`, err =>
       console.log(err)
     );

@@ -1,8 +1,10 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const _ = require("lodash");
 const { User, Bucket } = require("../models");
+const isNoUserRegistred = require("../middleware/isNoUserRegistred");
+const JSONAPISerializer = require("jsonapi-serializer").Serializer;
+const JSONAPIError = require("jsonapi-serializer").Error;
 
 // @TODO: implemente validation
 
@@ -12,110 +14,125 @@ class AuthController {
     this.routes();
   }
   routes() {
-    this.router.post("/register", this.register);
-    this.router.post("/login", this.login);
-    this.router.patch("/update", this.update);
+    this.router.post("/register", isNoUserRegistred, this.register.bind(this));
+    this.router.post("/login", this.login.bind(this));
+    this.router.patch("/update", this.update.bind(this));
   }
   async register(req, res) {
-    try {
+    if (res.locals.isFirstUser) {
+      const newSuperUser = await this.createUser(req.body, true);
+      const serializedUserData = this.serializeUserData(newSuperUser);
+      res.status(201).send(serializedUserData);
+    } else {
       const user = await User.findOne({ where: { email: req.body.email } });
       if (user) {
-        let error = "Email already exists";
-        return res.status(400).json({ success: false, error });
+        return res.status(400).json(
+          new JSONAPIError({
+            status: 400,
+            title: "Email already exists",
+            detail:
+              "This email already registred in your database. Try to reset your password or create a new account with a new email"
+          })
+        );
       } else {
-        const newUser = {
-          username: req.body.username,
-          email: req.body.email,
-          password: req.body.password || ""
-        };
-
-        const user = await User.create(newUser);
-
-        try {
-          const userWithoutPassword = _.pick(user, ["id", "username", "email"]);
-          const newRoot = {
-            bucket: "root",
-            rootBucketId: null,
-            userId: userWithoutPassword.id
-          };
-          const root = await Bucket.create(newRoot);
-
-          const newMusic = {
-            bucket: "musica",
-            rootBucketId: root.id,
-            userId: userWithoutPassword.id
-          };
-          const newVideos = {
-            bucket: "videos",
-            rootBucketId: root.id,
-            userId: userWithoutPassword.id
-          };
-          const newDocuments = {
-            bucket: "documentos",
-            rootBucketId: root.id,
-            userId: userWithoutPassword.id
-          };
-
-          await Bucket.create(newMusic);
-          await Bucket.create(newVideos);
-          await Bucket.create(newDocuments);
-
-          res.send({
-            user: userWithoutPassword
-          });
-        } catch (error) {
-          console.log(error);
-        }
+        const newNormalUser = await this.createUser(req.body, false);
+        const serializeddUserData = this.serializeUserData(newNormalUser);
+        this.createBaseBuckets(newNormalUser.id);
+        res.send(serializeddUserData);
       }
-    } catch (error) {
-      res.status(500).send({ error, success: false });
     }
   }
 
+  serializeUserData(userData, linksFunction = "") {
+    return new JSONAPISerializer("user", {
+      attributes: ["username", "email", "isSuperUser"],
+      dataLinks: linksFunction
+    }).serialize(userData);
+  }
+
+  createUser(user, isSuperuser) {
+    const newUser = User.create({
+      username: user.username,
+      email: user.email,
+      password: user.password,
+      isSuperUser: isSuperuser
+    });
+
+    return newUser;
+  }
+
+  async createBaseBuckets(userId) {
+    const root = await Bucket.create({
+      bucket: "root",
+      rootBucketId: null,
+      userId: userId
+    });
+    await Bucket.create({
+      bucket: "musica",
+      rootBucketId: root.id,
+      userId: userId
+    });
+    await Bucket.create({
+      bucket: "videos",
+      rootBucketId: root.id,
+      userId: userId
+    });
+    await Bucket.create({
+      bucket: "documentos",
+      rootBucketId: root.id,
+      userId: userId
+    });
+  }
+
   async login(req, res) {
-    try {
-      // Find user by email
-      const { email, password } = req.body;
-      const user = await User.findOne({ where: { email } });
+    // Find user by email
+    const { email, password } = req.body;
+    const user = await User.findOne({ where: { email } });
+    const isMatch = bcrypt.compare(password, user.password);
+    if (isMatch) {
+      //@TODO: improve data response
+      this.redirectUserWithBlankPassword(password, res);
+      this.sendJwtToken(user, res);
+    } else {
+      return res.status(400).send(
+        new JSONAPIError({
+          status: 400,
+          title: "Password is incorrect"
+        })
+      );
+    }
+  }
 
-      const isMatch = bcrypt.compare(password, user.password);
-      if (isMatch) {
-        if (password === "") {
-          const userWithoutPassword = _.pick(user, ["id", "username", "email"]);
-          return res.status(307).json({
-            message: "Update your password",
-            userWithoutPassword,
-            url: `${process.env.APP_URL}api/auth/update`
-          });
-        }
-        // User Matched
-        const payload = { id: user.id, username: user.username }; // Create JWT Payload
-        // Sign Token
-        jwt.sign(
-          payload,
-          process.env.APP_SECRET,
-          { expiresIn: 3600 * 24 },
-          (err, token) => {
-            const userWithoutPassword = _.pick(user, [
-              "id",
-              "username",
-              "email"
-            ]);
-
-            return res.json({
-              user: userWithoutPassword,
-              success: true,
-              token: "Bearer " + token
-            });
-          }
+  sendJwtToken(user, res) {
+    const payload = { id: user.id, username: user.username }; // Create JWT Payload
+    jwt.sign(
+      payload,
+      process.env.APP_SECRET,
+      { expiresIn: 3600 },
+      (err, token) => {
+        return res.json(
+          new JSONAPISerializer("user", {
+            attributes: ["username", "email", "token", "isSuperUser"]
+          }).serialize({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            isSuperUser: user.isSuperUser,
+            token: "Bearer " + token
+          })
         );
-      } else {
-        return res
-          .status(400)
-          .send({ error: "Password incorrect", success: false });
       }
-    } catch (error) {
-      res.status(400).send({ error: "email not found", success: false });
+    );
+  }
+
+  redirectUserWithBlankPassword(password, res) {
+    if (password === "") {
+      return res.status(307).json({
+        data: {
+          message: "Update your password",
+          url: `${process.env.APP_URL}api/auth/update`
+        }
+      });
     }
   }
 
@@ -128,8 +145,9 @@ class AuthController {
       password: req.body.password
     };
     if (updatedUser) {
-      await userModel.update({ updatedUser });
-      return res.json({ success: true, message: "user updated!" });
+      const user = await userModel.update({ updatedUser });
+      const serializedUser = this.serializeUserData(user);
+      return res.json(serializedUser);
     }
   }
 }

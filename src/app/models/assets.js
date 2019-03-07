@@ -9,7 +9,8 @@ module.exports = (sequelize, DataTypes) => {
       encoding: DataTypes.STRING,
       size: DataTypes.INTEGER,
       userId: DataTypes.INTEGER,
-      url: DataTypes.STRING
+      url: DataTypes.STRING,
+      flagColor: DataTypes.STRING
     },
     {}
   );

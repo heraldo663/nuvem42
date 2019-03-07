@@ -3,7 +3,9 @@ module.exports = (sequelize, DataTypes) => {
   const Bucket = sequelize.define(
     "Bucket",
     {
-      bucket: DataTypes.STRING
+      bucket: DataTypes.STRING,
+      isFavorite: DataTypes.BOOLEAN,
+      flagColor: DataTypes.STRING
     },
     {}
   );

@@ -10,7 +10,7 @@ afterEach(async () => {
 });
 
 describe("register", () => {
-  it("should register a user", async () => {
+  it("should register an user", async () => {
     const newUser = {
       username: faker.name.firstName(),
       email: faker.internet.email(),

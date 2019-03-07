@@ -11,7 +11,6 @@ class AdminController {
   }
   routes() {
     this.router.get("/", this.getUsers);
-    this.router.patch("/:id", this.patchUser);
     this.router.delete("/:id", this.deleteUser);
   }
 
@@ -19,21 +18,6 @@ class AdminController {
     let users = await User.findAll({});
     users = _.reject(users, user => user.username === "nuvem42");
     return res.json(users);
-  }
-
-  async patchUser(req, res) {
-    try {
-      const user = await User.findOne({ id: req.params.id });
-      const noPasswordUser = {
-        username: user.name,
-        email: user.email,
-        password: ""
-      };
-      const updatedUser = await user.update({ noPasswordUser });
-      return res.json(updatedUser);
-    } catch (error) {
-      res.status(500).json({ error, success: false });
-    }
   }
 
   async deleteUser(req, res) {
