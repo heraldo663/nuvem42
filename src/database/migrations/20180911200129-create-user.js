@@ -37,7 +37,20 @@ module.exports = {
           }
         }
       },
+      passwordResetToken: {
+        allowNull: true,
+        type: Sequelize.STRING
+      },
+      passwordResetTokenExpires: {
+        allowNull: true,
+        type: Sequelize.DATE
+      },
       isSuperUser: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
+      isUserActive: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false

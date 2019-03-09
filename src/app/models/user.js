@@ -21,9 +21,17 @@ module.exports = (sequelize, DataTypes) => {
           this.setDataValue("password", hash);
         }
       },
+      passwordResetToken: {
+        type: DataTypes.STRING
+      },
+      passwordResetTokenExpires: {
+        type: DataTypes.DATE
+      },
       isSuperUser: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false
+        type: DataTypes.BOOLEAN
+      },
+      isUserActive: {
+        type: DataTypes.BOOLEAN
       }
     },
     {}

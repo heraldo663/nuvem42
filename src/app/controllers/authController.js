@@ -1,5 +1,6 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const { User, Bucket } = require("../models");
 const isNoUserRegistred = require("../middleware/isNoUserRegistred");
@@ -16,7 +17,7 @@ class AuthController {
   routes() {
     this.router.post("/register", isNoUserRegistred, this.register.bind(this));
     this.router.post("/login", this.login.bind(this));
-    this.router.patch("/update", this.update.bind(this));
+    this.router.post("/forgot_password", this.forgotPass.bind(this));
   }
   async register(req, res) {
     if (res.locals.isFirstUser) {
@@ -45,7 +46,7 @@ class AuthController {
 
   serializeUserData(userData, linksFunction = "") {
     return new JSONAPISerializer("user", {
-      attributes: ["username", "email", "isSuperUser"],
+      attributes: ["username", "email", "isSuperUser", "isUserActive"],
       dataLinks: linksFunction
     }).serialize(userData);
   }
@@ -136,19 +137,29 @@ class AuthController {
     }
   }
 
-  async update(req, res) {
-    let userModel = await Bucket.findOne({ id: req.params.id });
-    const updatedUser = {
-      id: req.body.id,
-      username: req.body.username,
-      email: req.body.email,
-      password: req.body.password
-    };
-    if (updatedUser) {
-      const user = await userModel.update({ updatedUser });
-      const serializedUser = this.serializeUserData(user);
-      return res.json(serializedUser);
+  async forgotPass(req, res) {
+    const { email } = req.body;
+    const user = await User.findOne({ where: { email: req.body.email } });
+    if (!user) {
+      return res.status(400).send(
+        new JSONAPIError({
+          status: 400,
+          title: "Email not found"
+        })
+      );
     }
+    const token = crypto.randomBytes(20).toString("hex");
+    const now = new Date();
+    const date = now.setHours(now.getHours() + 1);
+    this.updateUser(user, token, date);
+    res.status(200).send("foi");
+  }
+
+  async updateUser(userModel, token, date) {
+    const user = await userModel.update({
+      passwordResetToken: token,
+      passwordResetTokenExpires: date
+    });
   }
 }
 
