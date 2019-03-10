@@ -1,7 +1,5 @@
-const path = require("path");
 const nodemailer = require("nodemailer");
 const mailgunTransport = require("nodemailer-mailgun-transport");
-const hbs = require("nodemailer-express-handlebars");
 
 // Configure transport options
 const mailgunOptions = {
@@ -11,7 +9,7 @@ const mailgunOptions = {
   }
 };
 
-const transport;
+let transport;
 
 if (process.env.NODE_ENV === "production") {
   transport = mailgunTransport(mailgunOptions);
@@ -19,17 +17,12 @@ if (process.env.NODE_ENV === "production") {
   transport = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
+    secure: false,
     auth: {
       user: process.env.EMAIL_AUTH_USER,
       pass: process.env.EMAIL_AUTH_PASS
     }
   });
 }
-
-transport.use('compile', hbs({
-  viewEngine: 'handlebars',
-  viewPath: path.resolve("./src/resources/mail/"),
-  extName: '.html'
-}));
 
 module.exports = transport;

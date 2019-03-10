@@ -40,7 +40,8 @@ class App {
   routes() {
     this.app.use("/api", asyncErrorHandler(router));
     this.app.get("/*", function(req, res) {
-      res.sendFile(path.join(__dirname, "client/dist", "index.html"));
+      res.send("Server Online");
+      // res.sendFile(path.join(__dirname, "client/dist", "index.html"));
     });
   }
 }

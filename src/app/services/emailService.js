@@ -1,28 +1,30 @@
-const nodemailer = require("nodemailer");
-const transport = require("../../config/emailTransport");
+const transport = require("../../config/email");
+const path = require("path");
+const fs = require("fs");
+const ejs = require("ejs");
 
 class EmailService {
   constructor() {
-    this.emailClient = nodemailer.createTransport(transport);
+    this.emailClient = transport;
   }
-  sendText(to, subject, text) {
-    return new Promise((resolve, reject) => {
-      this.emailClient.sendMail(
-        {
-          from: '"Your Name" <youremail@yourdomain.com>',
-          to,
-          subject,
-          text
-        },
-        (err, info) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(info);
-          }
-        }
-      );
+
+  getTemplate(data) {
+    const html = fs.readFileSync(
+      path.resolve("./src/resources/mail/auth/forgotPassword.ejs"),
+      {
+        encoding: "utf-8"
+      }
+    );
+    return ejs.render(html, data);
+  }
+  sendForgotPassword(to, username, token) {
+    return this.emailClient.sendMail({
+      from: '"Nuvem42" <nuvem42@exemplo.com>',
+      subject: "Nuvem42 Reset Token",
+      to,
+      html: this.getTemplate({ username, token })
     });
   }
 }
+
 module.exports = new EmailService();

@@ -24,6 +24,15 @@ class BucketsController {
         rootBucketId: null
       }
     });
+
+    const bcuketTest = await Bucket.findOne({
+      where: {
+        userId: 2
+      }
+    });
+
+    console.log(bcuketTest);
+
     const buckets = await Bucket.findAll({
       where: {
         userId: req.user.id,

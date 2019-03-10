@@ -6,6 +6,7 @@ const { User, Bucket } = require("../models");
 const isNoUserRegistred = require("../middleware/isNoUserRegistred");
 const JSONAPISerializer = require("jsonapi-serializer").Serializer;
 const JSONAPIError = require("jsonapi-serializer").Error;
+const emailService = require("../services/emailService");
 
 // @TODO: implemente validation
 
@@ -18,11 +19,13 @@ class AuthController {
     this.router.post("/register", isNoUserRegistred, this.register.bind(this));
     this.router.post("/login", this.login.bind(this));
     this.router.post("/forgot_password", this.forgotPass.bind(this));
+    this.router.post("/update_password", this.updatePassword.bind(this));
   }
   async register(req, res) {
     if (res.locals.isFirstUser) {
       const newSuperUser = await this.createUser(req.body, true);
       const serializedUserData = this.serializeUserData(newSuperUser);
+      await this.createBaseBuckets(newSuperUser.id);
       res.status(201).send(serializedUserData);
     } else {
       const user = await User.findOne({ where: { email: req.body.email } });
@@ -38,7 +41,7 @@ class AuthController {
       } else {
         const newNormalUser = await this.createUser(req.body, false);
         const serializeddUserData = this.serializeUserData(newNormalUser);
-        this.createBaseBuckets(newNormalUser.id);
+        await this.createBaseBuckets(newNormalUser.id);
         res.send(serializeddUserData);
       }
     }
@@ -106,23 +109,23 @@ class AuthController {
 
   sendJwtToken(user, res) {
     const payload = { id: user.id, username: user.username }; // Create JWT Payload
-    jwt.sign(
+    const token = await jwt.sign(
       payload,
       process.env.APP_SECRET,
-      { expiresIn: 3600 },
-      (err, token) => {
-        return res.json(
-          new JSONAPISerializer("user", {
-            attributes: ["username", "email", "token", "isSuperUser"]
-          }).serialize({
-            id: user.id,
-            username: user.username,
-            email: user.email,
-            isSuperUser: user.isSuperUser,
-            token: "Bearer " + token
-          })
-        );
-      }
+      { expiresIn: 3600 }
+    );
+    const refreshToken = await jwt.sign(payload, process.env.APP_SECRET, {expiresIn: 3600 * 7})
+    res.json(
+      new JSONAPISerializer("user", {
+        attributes: ["username", "email", "token", "isSuperUser", "refreshToken"]
+      }).serialize({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        isSuperUser: user.isSuperUser,
+        token: "Bearer " + token,
+        refreshToken: refreshToken
+      })
     );
   }
 
@@ -148,18 +151,68 @@ class AuthController {
         })
       );
     }
-    const token = crypto.randomBytes(20).toString("hex");
+    const token = crypto
+      .randomBytes(4)
+      .toString("hex")
+      .toUpperCase();
     const now = new Date();
     const date = now.setHours(now.getHours() + 1);
-    this.updateUser(user, token, date);
-    res.status(200).send("foi");
+    this.updateUserResetToken(user, token, date);
+
+    emailService.sendForgotPassword(email, user.username, token);
+
+    res.send({
+      data: {
+        success: true,
+        message: "Email with token sent!"
+      }
+    });
   }
 
-  async updateUser(userModel, token, date) {
+  async updateUserResetToken(userModel, token, date) {
     const user = await userModel.update({
       passwordResetToken: token,
       passwordResetTokenExpires: date
     });
+  }
+
+  async updatePassword(req, res) {
+    const { token, newPassword, email } = req.body;
+    const user = await User.findOne({ where: { email } });
+
+    if (new Date(user.passwordResetTokenExpires).getTime() >= Date.now()) {
+      this.updateUserPasswordWithValidToken(token, newPassword, user, res);
+    } else {
+      res.status(400).send(
+        new JSONAPIError({
+          status: 400,
+          title: "Your token expired"
+        })
+      );
+    }
+  }
+
+  async updateUserPasswordWithValidToken(token, newPassword, user, res) {
+    if (token === user.passwordResetToken) {
+      await user.update({
+        passwordResetToken: null,
+        password: newPassword
+      });
+
+      res.status(200).json({
+        data: {
+          success: true,
+          message: "Password updated"
+        }
+      });
+    } else {
+      res.status(400).send(
+        new JSONAPIError({
+          status: 400,
+          title: "Token is invalid"
+        })
+      );
+    }
   }
 }
 
