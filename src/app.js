@@ -7,7 +7,7 @@ const helmet = require("helmet");
 const cors = require("cors");
 
 const router = require("./routes");
-const asyncErrorHandler = require("./app/middleware/asyncErrorHandler");
+const asyncErrorHandler = require("./app/middleware/asyncErrorhandler");
 
 class App {
   constructor() {

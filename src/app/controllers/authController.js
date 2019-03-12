@@ -20,6 +20,7 @@ class AuthController {
     this.router.post("/login", this.login.bind(this));
     this.router.post("/forgot_password", this.forgotPass.bind(this));
     this.router.post("/update_password", this.updatePassword.bind(this));
+    this.router.post("/refresh_token", this.refreshToken.bind(this));
   }
   async register(req, res) {
     if (res.locals.isFirstUser) {
@@ -89,14 +90,19 @@ class AuthController {
   }
 
   async login(req, res) {
-    // Find user by email
     const { email, password } = req.body;
     const user = await User.findOne({ where: { email } });
-    const isMatch = bcrypt.compare(password, user.password);
+    if (user == null)
+      return res.status(400).json({
+        msg: "user does not existe"
+      });
+    const isMatch = await bcrypt.compare(password, user.password);
+    this.redirectUserWithBlankPassword(password, res);
+    console.log(isMatch);
     if (isMatch) {
-      //@TODO: improve data response
-      this.redirectUserWithBlankPassword(password, res);
-      this.sendJwtToken(user, res);
+      const accessToken = await this.createAcessToken(user);
+      const refreshToken = await this.createRefreshToken(user);
+      this.sendLoginTokens({ accessToken, refreshToken }, user, res);
     } else {
       return res.status(400).send(
         new JSONAPIError({
@@ -107,24 +113,43 @@ class AuthController {
     }
   }
 
-  sendJwtToken(user, res) {
-    const payload = { id: user.id, username: user.username }; // Create JWT Payload
-    const token = await jwt.sign(
+  async createAcessToken(user) {
+    const payload = { id: user.id, username: user.username };
+    const accessToken = await jwt.sign(payload, process.env.APP_SECRET, {
+      expiresIn: 1500
+    });
+
+    return accessToken;
+  }
+
+  async createRefreshToken(user) {
+    const payload = { id: user.id, username: user.username };
+    const refreshToken = await jwt.sign(
       payload,
-      process.env.APP_SECRET,
-      { expiresIn: 3600 }
+      process.env.APP_SECRET_REFRESH_TOKEN,
+      { expiresIn: 3600 * 30 }
     );
-    const refreshToken = await jwt.sign(payload, process.env.APP_SECRET, {expiresIn: 3600 * 7})
+
+    return refreshToken;
+  }
+
+  sendLoginTokens(tokens, user, res) {
     res.json(
       new JSONAPISerializer("user", {
-        attributes: ["username", "email", "token", "isSuperUser", "refreshToken"]
+        attributes: [
+          "username",
+          "email",
+          "token",
+          "isSuperUser",
+          "refreshToken"
+        ]
       }).serialize({
         id: user.id,
         username: user.username,
         email: user.email,
         isSuperUser: user.isSuperUser,
-        token: "Bearer " + token,
-        refreshToken: refreshToken
+        token: "Bearer " + tokens.accessToken,
+        refreshToken: tokens.refreshToken || null
       })
     );
   }
@@ -167,6 +192,24 @@ class AuthController {
         message: "Email with token sent!"
       }
     });
+  }
+
+  async refreshToken(req, res) {
+    const { refreshToken } = req.body;
+    if (!refreshToken)
+      res.status(400).send({
+        msg: "No token."
+      });
+    const jwtPayload = jwt.verify(
+      refreshToken,
+      process.env.APP_SECRET_REFRESH_TOKEN
+    );
+    console.log(jwtPayload.exp * 1000);
+    if (jwtPayload.exp * 1000 >= Date.now()) {
+      const user = await User.findByPk(jwtPayload.id);
+      const accessToken = await this.createAcessToken(user);
+      this.sendLoginTokens({ accessToken }, user, res);
+    }
   }
 
   async updateUserResetToken(userModel, token, date) {

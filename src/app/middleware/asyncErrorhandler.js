@@ -1,9 +1,5 @@
-const JSONAPIError = require("jsonapi-serializer").Error;
-
-module.exports = fn => (...args) => {
-  try {
-    fn(...args);
-  } catch (error) {
+module.exports = fn => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(err => {
     res.status(500).json(
       new JSONAPIError({
         status: 500,
@@ -11,5 +7,5 @@ module.exports = fn => (...args) => {
         detail: "Try again later"
       })
     );
-  }
+  });
 };
