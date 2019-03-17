@@ -6,6 +6,7 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
+        unique: true,
         type: Sequelize.INTEGER
       },
       bucket: {
@@ -32,7 +33,7 @@ module.exports = {
       },
       userId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        onDelete: "CASCADE",
         references: {
           model: "Users",
           key: "id"
@@ -45,6 +46,7 @@ module.exports = {
       },
       rootBucketId: {
         type: Sequelize.INTEGER,
+        onDelete: "CASCADE",
         references: {
           model: "Buckets",
           key: "id"

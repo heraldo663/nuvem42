@@ -31,7 +31,8 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN
       },
       isUserActive: {
-        type: DataTypes.BOOLEAN
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
       }
     },
     {}
@@ -39,6 +40,10 @@ module.exports = (sequelize, DataTypes) => {
   User.associate = function(models) {
     // associations can be defined here
     User.hasMany(models.Bucket, {
+      foreignKey: "userId",
+      onDelete: "CASCADE"
+    });
+    User.hasMany(models.Assets, {
       foreignKey: "userId",
       onDelete: "CASCADE"
     });

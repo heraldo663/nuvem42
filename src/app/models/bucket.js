@@ -5,7 +5,8 @@ module.exports = (sequelize, DataTypes) => {
     {
       bucket: DataTypes.STRING,
       isFavorite: DataTypes.BOOLEAN,
-      flagColor: DataTypes.STRING
+      flagColor: DataTypes.STRING,
+      userId: DataTypes.INTEGER
     },
     {}
   );
