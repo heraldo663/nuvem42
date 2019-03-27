@@ -24,11 +24,15 @@ module.exports = (sequelize, DataTypes) => {
       passwordResetToken: {
         type: DataTypes.STRING
       },
+      activeAcountToken: {
+        type: DataTypes.STRING
+      },
       passwordResetTokenExpires: {
         type: DataTypes.DATE
       },
       isSuperUser: {
-        type: DataTypes.BOOLEAN
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
       },
       isUserActive: {
         type: DataTypes.BOOLEAN,

@@ -42,6 +42,10 @@ module.exports = {
         allowNull: true,
         type: Sequelize.STRING
       },
+      activeAcountToken: {
+        allowNull: true,
+        type: Sequelize.STRING
+      },
       passwordResetTokenExpires: {
         allowNull: true,
         type: Sequelize.DATE

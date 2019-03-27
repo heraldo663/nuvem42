@@ -3,9 +3,11 @@ const { User } = require("../src/app/models");
 const faker = require("faker");
 
 factory.define("User", User, {
-  name: faker.name.firstName(),
+  username: faker.name.firstName(),
   email: faker.internet.email(),
-  password: faker.internet.password()
+  password: faker.internet.password(),
+  isSuperUser: false,
+  isUserActive: false
 });
 
 module.exports = factory;

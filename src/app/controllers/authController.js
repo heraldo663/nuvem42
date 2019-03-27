@@ -9,30 +9,21 @@ const JSONAPIError = require("jsonapi-serializer").Error;
 const emailService = require("../services/emailService");
 const { check, validationResult } = require("express-validator/check");
 
+//@TODO: MOVE VALIDATION SCHEMA TO SEPARATE FILE
 const registerValidation = [
   check("username").exists(),
-  check("email")
-    .exists()
-    .isEmail(),
-  check("password")
-    .isLength({ min: 5 })
-    .exists()
+  check("email").isEmail(),
+  check("password").isLength({ min: 5 })
 ];
 const updatePasswordValidation = [
-  check("email")
-    .exists()
-    .isEmail(),
+  check("email").isEmail(),
   check("newPassword").isLength({ min: 5 }),
   check("token").exists()
 ];
 
 const loginValidation = [
-  check("email")
-    .exists()
-    .isEmail(),
-  check("password")
-    .isLength({ min: 5 })
-    .exists()
+  check("email").isEmail(),
+  check("password").isLength({ min: 5 })
 ];
 
 // @TODO: implemente validation
@@ -86,23 +77,20 @@ class AuthController {
       const newSuperUser = await this.createUser(req.body, true);
       const serializedUserData = this.serializeUserData(newSuperUser);
       await this.createBaseBuckets(newSuperUser.id);
-      res.status(201).send(serializedUserData);
+      return res.status(201).send(serializedUserData);
     } else {
       const user = await User.findOne({ where: { email: req.body.email } });
       if (user) {
-        return res.status(400).json(
-          new JSONAPIError({
-            status: 400,
-            title: "Email already exists",
-            detail:
-              "This email already registred in your database. Try to reset your password or create a new account with a new email"
-          })
-        );
+        return res.status(400).json({
+          errors: {
+            msg: "Email already registered!"
+          }
+        });
       } else {
         const newNormalUser = await this.createUser(req.body, false);
         const serializeddUserData = this.serializeUserData(newNormalUser);
         await this.createBaseBuckets(newNormalUser.id);
-        res.status(201).send(serializeddUserData);
+        return res.status(201).send(serializeddUserData);
       }
     }
   }
@@ -149,12 +137,17 @@ class AuthController {
   }
 
   async login(req, res) {
-    this.handleValidationErrors(req, res);
+    const isValid = this.handleValidationErrors(req);
+    if (!!isValid) {
+      return res.status(400).send(isValid);
+    }
     const { email, password } = req.body;
     const user = await User.findOne({ where: { email } });
     if (user == null)
       return res.status(400).json({
-        msg: "user does not existe"
+        errors: {
+          msg: "user does not existe"
+        }
       });
     const isMatch = await bcrypt.compare(password, user.password);
     this.redirectUserWithBlankPassword(password, res);
@@ -163,12 +156,7 @@ class AuthController {
       const refreshToken = await this.createRefreshToken(user);
       this.sendLoginTokens({ accessToken, refreshToken }, user, res);
     } else {
-      return res.status(400).send(
-        new JSONAPIError({
-          status: 400,
-          title: "Password is incorrect"
-        })
-      );
+      return res.status(400).send({ errors: { msg: "Password is incorrect" } });
     }
   }
 
@@ -227,7 +215,10 @@ class AuthController {
   }
 
   async forgotPass(req, res) {
-    this.handleValidationErrors(req, res);
+    const isValid = this.handleValidationErrors(req);
+    if (!!isValid) {
+      return res.status(400).send(isValid);
+    }
     const { email } = req.body;
     const user = await User.findOne({ where: { email: req.body.email } });
     if (!user) {
@@ -245,14 +236,21 @@ class AuthController {
     const now = new Date();
     const date = now.setHours(now.getHours() + 1);
     this.updateUserResetToken(user, token, date);
-    emailService.sendForgotPassword(email, user.username, token);
+    emailService.sendEmail(
+      email,
+      { username: user.username, token },
+      "auth/forgotPassword"
+    );
     res.send({
       data: { success: true, message: "Email with token sent!" }
     });
   }
 
   async refreshToken(req, res) {
-    this.handleValidationErrors(req, res);
+    const isValid = this.handleValidationErrors(req);
+    if (!!isValid) {
+      return res.status(400).send(isValid);
+    }
     const { refreshToken } = req.body;
     if (!refreshToken)
       res.status(400).send(
@@ -280,7 +278,10 @@ class AuthController {
   }
 
   async updatePassword(req, res) {
-    this.handleValidationErrors(req, res);
+    const isValid = this.handleValidationErrors(req);
+    if (!!isValid) {
+      return res.status(400).send(isValid);
+    }
     const { token, newPassword, email } = req.body;
     const user = await User.findOne({ where: { email } });
 

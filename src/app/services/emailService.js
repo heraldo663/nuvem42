@@ -8,21 +8,21 @@ class EmailService {
     this.emailClient = transport;
   }
 
-  getTemplate(data) {
+  getTemplate(from, data) {
     const html = fs.readFileSync(
-      path.resolve("./src/resources/mail/auth/forgotPassword.ejs"),
+      path.resolve(`./src/resources/mail/${from}.ejs`),
       {
         encoding: "utf-8"
       }
     );
-    return ejs.render(html, data);
+    return ejs.render(html, data, emailTemplate);
   }
-  sendForgotPassword(to, username, token) {
+  sendEmail(to, ctx, template) {
     return this.emailClient.sendMail({
       from: '"Nuvem42" <nuvem42@exemplo.com>',
       subject: "Nuvem42 Reset Token",
       to,
-      html: this.getTemplate({ username, token })
+      html: this.getTemplate(template, ctx)
     });
   }
 }
