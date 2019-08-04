@@ -7,8 +7,8 @@ const { isAdmin } = require("../../middleware/isAdmin");
 /* GET home page. */
 router.post(
   "/register",
-  passport.authenticate("jwt", { session: false }),
-  isAdmin,
+  // passport.authenticate("jwt", { session: false }),
+  // isAdmin,
   register
 );
 router.post("/login", login);

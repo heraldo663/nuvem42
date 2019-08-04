@@ -29,7 +29,7 @@ let router = new Router({
   ]
 });
 
-const openRoutes = ["Login"];
+const openRoutes = ["Login", "Register"];
 
 router.beforeEach((to, from, next) => {
   if (openRoutes.includes(to.name)) {

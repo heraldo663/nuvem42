@@ -16,7 +16,7 @@ const assetsRouter = require("./routes/api/assets");
 
 const app = express();
 
-require("./seeders/adminSeed")();
+// require("./seeders/adminSeed")();
 
 app.use(passport.initialize());
 require("./services/passport")(passport);
@@ -35,12 +35,12 @@ app.use(
 );
 app.use(express.static(path.join(__dirname, "client/dist")));
 
-app.use(
-  "/api/admin",
-  passport.authenticate("jwt", { session: false }),
-  isAdmin,
-  adminRouter
-);
+// app.use(
+//   "/api/admin",
+//   passport.authenticate("jwt", { session: false }),
+//   isAdmin,
+//   adminRouter
+// );
 app.use("/api/auth", authRouter);
 app.use(
   "/api/bucket",
