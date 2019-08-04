@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
+    "db:create": "sequelize db:create",
+    "db:migrate": "sequelize db:migrate",
     "dev:server": "NODE_ENV=development nodemon ./bin/www",
     "dev:client": "npm run serve --prefix client",
     "install:client": "npm install --prefix client",

@@ -92,9 +92,10 @@ export default {
       formData.append("file", file);
       let xhrObj = new XMLHttpRequest();
       xhrObj.responseType = "json";
+      console.log(`${config.apiUrl}api/bucket/${getters.rootBucketId}/assets`);
       xhrObj.open(
         "POST",
-        `${config.apiUrl}api/bucket/${getters.rootBucketId}/assets/`,
+        `${config.apiUrl}api/bucket/${getters.rootBucketId}/assets`,
         true
       );
       xhrObj.upload.addEventListener(
