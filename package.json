@@ -9,7 +9,7 @@
     "install:client": "npm install --prefix client",
     "build:client": "npm run build --prefix client",
     "pretest": "cross-env NODE_ENV=test sequelize db:migrate",
-    "test": "cross-env NODE_ENV=test jest",
+    "test": "cross-env NODE_ENV=test jest --detectOpenHandles",
     "test:watch": "cross-env NODE_ENV=test jest --watch",
     "posttest": "cross-env NODE_ENV=test sequelize db:migrate:undo:all"
   },
@@ -35,7 +35,8 @@
     "pg-hstore": "^2.3.3",
     "sequelize": "^6.6.2",
     "sequelize-cli": "^6.2.0",
-    "validator": "^13.6.0"
+    "validator": "^13.6.0",
+    "yup": "^0.32.9"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
