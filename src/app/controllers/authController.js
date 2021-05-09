@@ -6,24 +6,24 @@ const { User, Bucket } = require("../models");
 const isNoUserRegistred = require("../middleware/isNoUserRegistred");
 const JSONAPISerializer = require("jsonapi-serializer").Serializer;
 const JSONAPIError = require("jsonapi-serializer").Error;
-const emailService = require("../services/emailService");
+const emailService = require("../providers/emailService");
 const { check, validationResult } = require("express-validator/check");
 
 //@TODO: MOVE VALIDATION SCHEMA TO SEPARATE FILE
 const registerValidation = [
   check("username").exists(),
   check("email").isEmail(),
-  check("password").isLength({ min: 5 })
+  check("password").isLength({ min: 5 }),
 ];
 const updatePasswordValidation = [
   check("email").isEmail(),
   check("newPassword").isLength({ min: 5 }),
-  check("token").exists()
+  check("token").exists(),
 ];
 
 const loginValidation = [
   check("email").isEmail(),
-  check("password").isLength({ min: 5 })
+  check("password").isLength({ min: 5 }),
 ];
 
 // @TODO: implemente validation
@@ -62,7 +62,7 @@ class AuthController {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return {
-        errors: errors.array()
+        errors: errors.array(),
       };
     } else {
       return false;
@@ -83,8 +83,8 @@ class AuthController {
       if (user) {
         return res.status(400).json({
           errors: {
-            msg: "Email already registered!"
-          }
+            msg: "Email already registered!",
+          },
         });
       } else {
         const newNormalUser = await this.createUser(req.body, false);
@@ -98,7 +98,7 @@ class AuthController {
   serializeUserData(userData, linksFunction = "") {
     return new JSONAPISerializer("user", {
       attributes: ["username", "email", "isSuperUser", "isUserActive"],
-      dataLinks: linksFunction
+      dataLinks: linksFunction,
     }).serialize(userData);
   }
 
@@ -107,7 +107,7 @@ class AuthController {
       username: user.username,
       email: user.email,
       password: user.password,
-      isSuperUser: isSuperuser
+      isSuperUser: isSuperuser,
     });
 
     return newUser;
@@ -117,22 +117,22 @@ class AuthController {
     const root = await Bucket.create({
       bucket: "root",
       rootBucketId: null,
-      userId: userId
+      userId: userId,
     });
     await Bucket.create({
       bucket: "musica",
       rootBucketId: root.id,
-      userId: userId
+      userId: userId,
     });
     await Bucket.create({
       bucket: "videos",
       rootBucketId: root.id,
-      userId: userId
+      userId: userId,
     });
     await Bucket.create({
       bucket: "documentos",
       rootBucketId: root.id,
-      userId: userId
+      userId: userId,
     });
   }
 
@@ -146,8 +146,8 @@ class AuthController {
     if (user == null)
       return res.status(400).json({
         errors: {
-          msg: "user does not existe"
-        }
+          msg: "user does not existe",
+        },
       });
     const isMatch = await bcrypt.compare(password, user.password);
     this.redirectUserWithBlankPassword(password, res);
@@ -163,7 +163,7 @@ class AuthController {
   async createAcessToken(user) {
     const payload = { id: user.id, username: user.username };
     const accessToken = await jwt.sign(payload, process.env.APP_SECRET, {
-      expiresIn: 1500
+      expiresIn: 1500,
     });
 
     return accessToken;
@@ -189,8 +189,8 @@ class AuthController {
           "isSuperUser",
           "isUserActive",
           "token",
-          "refreshToken"
-        ]
+          "refreshToken",
+        ],
       }).serialize({
         id: user.id,
         username: user.username,
@@ -198,7 +198,7 @@ class AuthController {
         isSuperUser: user.isSuperUser,
         isUserActive: user.isUserActive,
         token: "Bearer " + tokens.accessToken,
-        refreshToken: tokens.refreshToken || null
+        refreshToken: tokens.refreshToken || null,
       })
     );
   }
@@ -208,8 +208,8 @@ class AuthController {
       return res.status(307).json({
         data: {
           message: "Update your password",
-          url: `${process.env.APP_URL}api/auth/update`
-        }
+          url: `${process.env.APP_URL}api/auth/update`,
+        },
       });
     }
   }
@@ -225,14 +225,11 @@ class AuthController {
       return res.status(400).send(
         new JSONAPIError({
           status: 400,
-          title: "Email not found"
+          title: "Email not found",
         })
       );
     }
-    const token = crypto
-      .randomBytes(4)
-      .toString("hex")
-      .toUpperCase();
+    const token = crypto.randomBytes(4).toString("hex").toUpperCase();
     const now = new Date();
     const date = now.setHours(now.getHours() + 1);
     this.updateUserResetToken(user, token, date);
@@ -242,7 +239,7 @@ class AuthController {
       "auth/forgotPassword"
     );
     res.send({
-      data: { success: true, message: "Email with token sent!" }
+      data: { success: true, message: "Email with token sent!" },
     });
   }
 
@@ -256,7 +253,7 @@ class AuthController {
       res.status(400).send(
         new JSONAPIError({
           status: 400,
-          title: "No token sent!"
+          title: "No token sent!",
         })
       );
     const jwtPayload = jwt.verify(
@@ -273,7 +270,7 @@ class AuthController {
   async updateUserResetToken(userModel, token, date) {
     const user = await userModel.update({
       passwordResetToken: token,
-      passwordResetTokenExpires: date
+      passwordResetTokenExpires: date,
     });
   }
 
@@ -291,7 +288,7 @@ class AuthController {
       res.status(400).send(
         new JSONAPIError({
           status: 400,
-          title: "Your token expired"
+          title: "Your token expired",
         })
       );
     }
@@ -301,20 +298,20 @@ class AuthController {
     if (token === user.passwordResetToken) {
       await user.update({
         passwordResetToken: null,
-        password: newPassword
+        password: newPassword,
       });
 
       res.status(200).json({
         data: {
           success: true,
-          message: "Password updated"
-        }
+          message: "Password updated",
+        },
       });
     } else {
       res.status(400).send(
         new JSONAPIError({
           status: 400,
-          title: "Token is invalid"
+          title: "Token is invalid",
         })
       );
     }

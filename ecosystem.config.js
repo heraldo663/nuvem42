@@ -4,7 +4,7 @@ module.exports = {
       name: "Nuvem42",
       script: "./src/bin/www",
       watch: true,
-      instances: 2
-    }
-  ]
+      instances: 2,
+    },
+  ],
 };

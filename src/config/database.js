@@ -7,8 +7,8 @@ if (process.env.NODE_ENV == "test") {
     operatorsAliases: false,
     logging: false,
     define: {
-      timestamps: true
-    }
+      timestamps: true,
+    },
   };
 } else {
   module.exports = {
@@ -20,7 +20,7 @@ if (process.env.NODE_ENV == "test") {
     operatorsAliases: false,
     logging: false,
     define: {
-      timestamps: true
-    }
+      timestamps: true,
+    },
   };
 }
