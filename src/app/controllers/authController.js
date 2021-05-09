@@ -1,78 +1,14 @@
-const express = require("express");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
-const { User, Bucket } = require("../models");
-const isNoUserRegistred = require("../middleware/isNoUserRegistred");
 const JSONAPISerializer = require("jsonapi-serializer").Serializer;
 const JSONAPIError = require("jsonapi-serializer").Error;
+
+const { User, Bucket } = require("../models");
+
 const emailService = require("../providers/emailService");
-const { check, validationResult } = require("express-validator/check");
-
-//@TODO: MOVE VALIDATION SCHEMA TO SEPARATE FILE
-const registerValidation = [
-  check("username").exists(),
-  check("email").isEmail(),
-  check("password").isLength({ min: 5 }),
-];
-const updatePasswordValidation = [
-  check("email").isEmail(),
-  check("newPassword").isLength({ min: 5 }),
-  check("token").exists(),
-];
-
-const loginValidation = [
-  check("email").isEmail(),
-  check("password").isLength({ min: 5 }),
-];
-
-// @TODO: implemente validation
-
 class AuthController {
-  constructor() {
-    this.router = express.Router();
-    this.routes();
-  }
-  routes() {
-    this.router.post(
-      "/register",
-      registerValidation,
-      isNoUserRegistred,
-      this.register.bind(this)
-    );
-    this.router.post("/login", loginValidation, this.login.bind(this));
-    this.router.post(
-      "/forgot_password",
-      [check("email").isEmail()],
-      this.forgotPass.bind(this)
-    );
-    this.router.post(
-      "/update_password",
-      updatePasswordValidation,
-      this.updatePassword.bind(this)
-    );
-    this.router.post(
-      "/refresh_token",
-      [check("refreshToken").exists()],
-      this.refreshToken.bind(this)
-    );
-  }
-
-  handleValidationErrors(req) {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return {
-        errors: errors.array(),
-      };
-    } else {
-      return false;
-    }
-  }
   async register(req, res) {
-    const isValid = this.handleValidationErrors(req);
-    if (!!isValid) {
-      return res.status(400).send(isValid);
-    }
     if (res.locals.isFirstUser) {
       const newSuperUser = await this.createUser(req.body, true);
       const serializedUserData = this.serializeUserData(newSuperUser);
@@ -137,10 +73,6 @@ class AuthController {
   }
 
   async login(req, res) {
-    const isValid = this.handleValidationErrors(req);
-    if (!!isValid) {
-      return res.status(400).send(isValid);
-    }
     const { email, password } = req.body;
     const user = await User.findOne({ where: { email } });
     if (user == null)
@@ -215,10 +147,6 @@ class AuthController {
   }
 
   async forgotPass(req, res) {
-    const isValid = this.handleValidationErrors(req);
-    if (!!isValid) {
-      return res.status(400).send(isValid);
-    }
     const { email } = req.body;
     const user = await User.findOne({ where: { email: req.body.email } });
     if (!user) {
@@ -244,10 +172,6 @@ class AuthController {
   }
 
   async refreshToken(req, res) {
-    const isValid = this.handleValidationErrors(req);
-    if (!!isValid) {
-      return res.status(400).send(isValid);
-    }
     const { refreshToken } = req.body;
     if (!refreshToken)
       res.status(400).send(
@@ -275,10 +199,6 @@ class AuthController {
   }
 
   async updatePassword(req, res) {
-    const isValid = this.handleValidationErrors(req);
-    if (!!isValid) {
-      return res.status(400).send(isValid);
-    }
     const { token, newPassword, email } = req.body;
     const user = await User.findOne({ where: { email } });
 
@@ -318,4 +238,4 @@ class AuthController {
   }
 }
 
-module.exports = new AuthController().router;
+module.exports = new AuthController();
