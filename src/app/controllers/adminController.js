@@ -22,7 +22,7 @@ class AdminController {
 
   async deleteUser(req, res) {
     try {
-      const user = await User.findById(req.params.id);
+      const user = await User.findByPk(req.params.id);
       await user.destroy();
       res.json({ success: true });
     } catch (error) {

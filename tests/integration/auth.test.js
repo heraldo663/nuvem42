@@ -11,7 +11,7 @@ beforeAll(async () => {
   });
 });
 
-describe("register", () => {
+describe("/POST register", () => {
   it("should register a superuser", async () => {
     const newUser = {
       username: faker.name.firstName(),
@@ -20,10 +20,19 @@ describe("register", () => {
     };
 
     const res = await request(server).post("/api/auth/register").send(newUser);
+    const userCreated = await User.findOne({
+      where: {
+        email: res.body.user.email,
+      },
+    });
+
     expect(res.status).toBe(201);
-    expect(res.body.data.attributes["is-super-user"]).toBe(true);
-    expect(res.body.data.attributes["is-user-active"]).toBe(false);
+    expect(res.body.user.createdAt).not.toBeUndefined();
+    expect(res.body.user.email).toBe(newUser.email);
+    expect(userCreated.dataValues.isSuperUser).toBe(true);
+    expect(userCreated.dataValues.isUserActive).toBe(false);
   });
+
   it("should register a normal user", async () => {
     const newUser = {
       username: faker.name.firstName(),
@@ -33,9 +42,10 @@ describe("register", () => {
 
     const res = await request(server).post("/api/auth/register").send(newUser);
     expect(res.status).toBe(201);
-    expect(res.body.data.attributes["is-super-user"]).toBe(false);
-    expect(res.body.data.attributes["is-user-active"]).toBe(false);
+    expect(res.body.user.createdAt).not.toBeUndefined();
+    expect(res.body.user.email).toBe(newUser.email);
   });
+
   it("should fail to resgister a normal user withot an email", async () => {
     const newUser = {
       username: faker.name.firstName(),
@@ -44,9 +54,9 @@ describe("register", () => {
 
     const res = await request(server).post("/api/auth/register").send(newUser);
     expect(res.status).toBe(400);
-    console.log(res.body);
     expect(res.body).toHaveProperty("errors");
   });
+
   it("should fail to resgister a normal user with invalid email", async () => {
     const newUser = {
       username: faker.name.firstName(),
@@ -72,7 +82,7 @@ describe("register", () => {
     const newUser = {
       username: faker.name.firstName(),
       email: faker.internet.email(),
-      password: `1234`,
+      password: "1234",
     };
 
     const res = await request(server).post("/api/auth/register").send(newUser);
@@ -94,7 +104,7 @@ describe("register", () => {
   });
 });
 
-describe("Login", () => {
+describe("/POST Login", () => {
   it("should recive a token on login", async () => {
     const password = "12345678";
     const user = await factory.create("User", {
@@ -105,7 +115,7 @@ describe("Login", () => {
       password: password,
     });
 
-    expect(res.body.data.attributes).toHaveProperty("token");
+    expect(res.body).toHaveProperty("token");
     expect(res.status).toBe(200);
   });
   it("should fail to login a user with incorrect password", async () => {

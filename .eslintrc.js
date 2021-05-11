@@ -8,6 +8,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 12,
   },
+  plugins: ["jest"],
   rules: {
     indent: ["error", 2],
     "linebreak-style": ["error", "unix"],

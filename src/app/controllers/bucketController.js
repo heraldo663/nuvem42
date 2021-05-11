@@ -21,28 +21,20 @@ class BucketsController {
       where: {
         userId: req.user.id,
         bucket: "root",
-        rootBucketId: null
-      }
+        rootBucketId: null,
+      },
     });
-
-    const bcuketTest = await Bucket.findOne({
-      where: {
-        userId: 2
-      }
-    });
-
-    console.log(bcuketTest);
 
     const buckets = await Bucket.findAll({
       where: {
         userId: req.user.id,
-        rootBucketId: root.id
-      }
+        rootBucketId: root.dataValues.id,
+      },
     });
 
     return res.json({
       buckets,
-      rootId: root.id
+      rootId: root.dataValues.id,
     });
   }
 
@@ -50,8 +42,8 @@ class BucketsController {
     const buckets = await Bucket.findAll({
       where: {
         userId: req.user.id,
-        rootBucketId: req.params.id
-      }
+        rootBucketId: req.params.id,
+      },
     });
 
     return res.json(buckets);
@@ -62,13 +54,13 @@ class BucketsController {
       where: {
         userId: req.user.id,
         bucket: "root",
-        rootBucketId: null
-      }
+        rootBucketId: null,
+      },
     });
     const newBucket = {
       bucket: req.body.bucket,
-      rootBucketId: req.body.rootBucketId || root.id,
-      userId: req.user.id
+      rootBucketId: req.body.rootBucketId || root.dataValues.id,
+      userId: req.user.id,
     };
 
     if (!newBucket.bucket) {
@@ -81,18 +73,18 @@ class BucketsController {
   }
 
   async patchBucket(req, res) {
-    let bucketModel = await Bucket.findOne({ id: req.params.id });
+    let bucketModel = await Bucket.findByPk(req.params.id);
     const { bucket } = req.body;
     if (bucket) {
       const updatedBucket = await bucketModel.update({
-        bucket
+        bucket,
       });
       return res.json(updatedBucket);
     }
   }
 
   async deleteBucket(req, res) {
-    const bucket = await Bucket.findById(req.params.id);
+    const bucket = await Bucket.findByPk(req.params.id);
     bucket.destroy();
     res.json({ success: true });
   }
